@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <!-- CSS Propio -->
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>TecniPC | Productos y servicios</title>
+</head>
+<body id="grilla-gral">
+    <header id="header-navegacion">
+        <!-- Menú de navegación -->
+        <nav class="navbar navbar-expand-lg bg-light w-100">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="../index.html">
+                    <!-- Logo -->
+                    <img src="../img/logo-inicio.png" alt="Logo" class="logo">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navegacion-web">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="../index.html">Inicio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="../pages/QuienesSomos.html">Quienes somos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="../pages/Servicios.html">Servicios</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="../pages/Galeria.html">Galeria</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="../pages/Contacto.html">Contacto</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <h1>TecniPC</h1>
+        <h2>Productos y servicios</h2>
+    </header>
+
+    <main id="servicios">
+    <section>
+        <h3 class="p-servicios">Agregar nuevo producto</h3>
+        <form id="addProductForm" class="padre-cards">
+            <div class="mb-3">
+                <label for="status" class="form-label">Estado</label>
+                    <select class="form-select" id="status" name="status" required>
+                        <option value="true">True</option>
+                        <option value="false">False</option>
+                    </select>
+            </div>
+            <div class="mb-3">
+                <label for="thumbnails" class="form-label">Selecciona una imagen</label>
+                <select class="form-select" id="thumbnails" name="thumbnails" required>
+                    <option value="" selected disabled>Selecciona una imagen</option>
+                    <option value="https://picsum.photos/700/409?random">Imagen 1</option>
+                    <option value="https://picsum.photos/700/410?random">Imagen 2</option>
+                    <option value="https://picsum.photos/700/411?random">Imagen 3</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="title" class="form-label">Título</label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="Título" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Descripción</label>
+                <textarea class="form-control" id="description" name="description" placeholder="Descripción" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="price" class="form-label">Precio</label>
+                <input type="number" class="form-control" id="price" name="price" min="0" step="0.01" placeholder="Precio" required>
+            </div>
+            <div class="mb-3">
+                <label for="code" class="form-label">Código</label>
+                <input type="text" class="form-control" id="code" name="code" placeholder="Código" required>
+            </div>
+            <div class="mb-3">
+                <label for="stock" class="form-label">Stock</label>
+                <input type="number" class="form-control" id="stock" name="stock" min="0" placeholder="Stock" required>
+            </div>
+            <div class="mb-3">
+                <label for="category" class="form-label">Categoría</label>
+                <input type="text" class="form-control" id="category" name="category" placeholder="Categoría" required>
+            </div>
+            <!-- Agrega un mensaje de error para mostrar si el código ya existe -->
+            <div id="codeErrorMessage" class="alert alert-danger" style="display: none;"></div>
+            <!-- Mensaje de error para el código -->
+            <div id="codeError" style="display: none;">
+                <p id="codeErrorMessage" style="color: red;"></p>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Producto</button>
+        </form>
+    </section>
+
+    <section>
+    <h3 class="p-servicios">Ofrecemos trabajos y productos de la más alta calidad</h3>
+    <div class="padre-cards" id="liveProducts">
+        <!-- Tarjetas de productos -->
+        {{!-- Acá van a ir las tarjetas nuevas --}}
+        {{#each products}}
+        <div class="card-servicios">
+            <img src="{{this.thumbnails}}" alt="Imagen">
+            <p>{{this.title}}</p>
+            <p>Precio: {{this.price}}</p>
+            <p>Descripción: {{this.description}}</p>
+            <p>Stock: {{this.stock}}</p>
+            <!-- Botón para eliminar el producto -->
+            <button class="eliminar-producto" data-product-id="{{this.id}}">Eliminar</button>
+        </div>
+        {{/each}}
+    </div>
+    </section>
+
+    <!--Seccion de banner-->
+    <section id="banner__productosyservicios">
+
+        <h3>Seguridad informática</h3>
+
+        <div id="padre__banner" >
+            <!--Banner 1-->
+            <div class="banner__info">
+                <h4>Antivirus</h4>
+                <p>Limpieza y elimincación de virus</p>
+            </div>
+
+            <!--Banner 2-->
+            <div class="banner__info">
+                <h4>Recuperación de datos</h4>
+                <p>Recuperación de documentos</p>
+            </div>
+
+            <!--Banner 3-->
+            <div class="banner__info">
+                <h4>Wannacry</h4>
+                <p>Recuperamos archivos encriptados</p>
+            </div>
+
+            <!--Banner 4-->
+            <div class="banner__info">
+                <h4>Software de seguridad</h4>
+                <p>Antivirus de primer nivel</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer id="footer">
+    Web creada por Adrián Fernández. Todos los derechos reservados.
+</footer>
+
+<script src="/socket.io/socket.io.js"></script>
+<!-- Script de Handlebars desde CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+{{!-- Link al js con Handlebars --}}
+<script src="/js/productosRealTime.js"></script>

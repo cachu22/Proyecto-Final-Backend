@@ -1,0 +1,23 @@
+# Ignora la carpeta node_modules
+node_modules
+
+# Ignora archivo clase0.js
+clase0
+
+# Ignora el archivo .env.development
+
+# ignora comentado.js
+.comentado.js
+
+# ignora la base del servidor
+La_base_del_servidor/*
+
+# ignora index.js
+index
+
+#ignora archivos en carpeta ignores
+ignores
+
+# carpeta Upload
+src/Upload/
+

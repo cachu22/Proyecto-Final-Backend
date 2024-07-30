@@ -1,0 +1,159 @@
+			//Tratar consultas y solicitudes sobre la DB
+			//PRODUCTOS
+### Consulta para traer todos los productos de mi DB
+GET http://localhost:8000/mgProducts/
+
+### Consulta para traer los productos con paginación
+GET http://127.0.0.1:8000/mgProducts/products/
+
+### Obtener productos filtrados por categoría
+GET http://127.0.0.1:8000/mgProducts/products/category/Escape/
+# Utilizar: Iluminacion, Motor o Escape
+
+### Obtener productos filtrados por disponibilidad
+GET http://127.0.0.1:8080/mgProducts/products/status/false
+
+### Obtener productos ordenados por precio ascendente
+GET http://127.0.0.1:8080/mgProducts/products/sort/price/asc
+
+### Obtener productos ordenados por precio descendente
+GET http://127.0.0.1:8080/mgProducts/products/sort/price/desc
+
+### Consulta GET para traer un producto por id en DB
+GET http://127.0.0.1:8080/mgProducts/664b6d06e6befaceea103874
+
+### Solicitud post para agregar un producto a "productos" en DB
+POST http://127.0.0.1:8080/mgProducts/
+Content-Type: application/json
+
+{
+    "model": "2000",
+	"title": "Injector",
+    "description": "Fiat siena",
+    "price": 36000,
+    "thumbnails": "https://picsum.photos/700/435?random",
+    "code": "44",
+    "stock": 3,
+    "category": "Motor"
+}
+
+### Solicitud para modificar un producto en DB
+PUT http://127.0.0.1:8080/mgProducts/663f9a859d15d55199f767dc
+Content-Type: application/json
+
+{
+	"title": "Burro de arranque eletrico",
+	"price": 2003
+}
+
+### Solicitud para eliminar un producto de mi DB
+DELETE http://127.0.0.1:8080/mgProducts/664746d81726fcad5422b4ce
+
+
+			//CARRITOS
+### Solicitud para crear una cart en DB
+POST http://127.0.0.1:8080/api/cartsDB/
+Content-Type: application/json
+
+{}
+
+### Solicitud para traer todos los carritos de la DB
+GET http://127.0.0.1:8080/api/cartsDB/
+
+### traer Carts por id en mi base de datos
+GET http://localhost:8080/api/cartsDB/664be577fa72a1055ac0ab59
+
+### Solicitud para agregar productos al carrito DB
+POST http://localhost:8080/api/cartsDB/664be577fa72a1055ac0ab59/product/664b6d9ae6befaceea103880
+Content-Type: application/json
+
+{
+  "quantity": 1
+}
+
+### Solicitud para actualizar el carrito con un producto
+PUT http://127.0.0.1:8080/api/cartsDB/664be577fa72a1055ac0ab59/
+Content-Type: application/json
+
+{
+	"productId": "664b6d06e6befaceea103874",
+	"quantity": 1
+}
+
+### Solicitud para actualizar la cantidad de un producto en el carrito
+PUT http://127.0.0.1:8080/api/cartsDB/664be577fa72a1055ac0ab59/products/664b6d06e6befaceea103874
+Content-Type: application/json
+
+{
+    "quantity": 3
+}
+
+### Solicitud para eliminar un producto de un carrito de DB
+DELETE http://localhost:8080/api/cartsDB/664be577fa72a1055ac0ab59/product/664b6de9e6befaceea103888
+
+### Solicitud para eliminar todos los productos de un carrito de DB
+DELETE http://localhost:8080/api/cartsDB/664be577fa72a1055ac0ab59/products
+
+
+
+			//Tratar consultas y solicitudes sobre FS
+			//PRODUCTOS
+### Traer todos los productos FS
+get http://localhost:8080/api/products
+
+### Traer productos con limite de cantidad
+GET http://localhost:8080/api/products/?limit=3
+
+### consulta GET para traer un producto por id en FS
+GET http://127.0.0.1:8080/api/products/2
+
+### Cargar un producto en FS
+POST http://localhost:8080/api/products/
+Content-Type: application/json
+
+{
+   		 "title": "testdeREST",
+   		 "description": "testdeREST",
+   		 "price": 4,
+   		 "thumbnails": "https://picsum.photos/700/410?random",
+   		 "code": "10810",
+   		 "stock": 6,
+   		 "category": "testdeREST"
+}
+
+### Solicitud para modificar un producto en FS
+PUT http://localhost:8080/api/products/1
+Content-Type: application/json
+
+{
+	"stock": 12
+}
+
+### Solicitud para eliminar un producto en FS
+DELETE http://localhost:8080/api/products/2
+
+			//CARRITOS
+
+### Solicitud para crear una cart en FS
+POST http://localhost:8080/api/carts
+Content-Type: application/json
+
+{}
+
+### Solicitud para traer todos los carritos de FS
+GET http://localhost:8080/api/carts/
+
+### Solicitud para traer un carrito por id de FS
+GET http://localhost:8080/api/carts/5
+
+### Solicitud para agregar un producto al carrito FS
+POST http://localhost:8080/api/carts/5/product/2
+
+###users
+POST http://localhost:8000/api/usersDB/
+Content-Type: application/json
+
+{
+	"first_name": "Adrián 1",
+	"last_name": "Fernández"
+}

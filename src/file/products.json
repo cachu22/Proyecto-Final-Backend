@@ -1,0 +1,46 @@
+[
+  {
+    "id": 1,
+    "status": "true",
+    "title": "Gabinete",
+    "description": "Reciclado",
+    "price": "2210",
+    "thumbnails": "https://picsum.photos/700/411?random",
+    "code": "Gab12",
+    "stock": 12,
+    "category": "Gabinetes"
+  },
+  {
+    "id": 4,
+    "status": true,
+    "thumbnails": "https://picsum.photos/700/410?random",
+    "title": "testdeREST",
+    "description": "testdeREST",
+    "price": 4,
+    "code": "102",
+    "stock": 6,
+    "category": "testdeREST"
+  },
+  {
+    "id": 5,
+    "status": true,
+    "thumbnails": "https://picsum.photos/700/410?random",
+    "title": "testdeREST",
+    "description": "testdeREST",
+    "price": 4,
+    "code": "103",
+    "stock": 6,
+    "category": "testdeREST"
+  },
+  {
+    "id": 3,
+    "status": true,
+    "thumbnails": "https://picsum.photos/700/410?random",
+    "title": "testdeREST",
+    "description": "testdeREST",
+    "price": 4,
+    "code": "108",
+    "stock": 6,
+    "category": "testdeREST"
+  }
+]

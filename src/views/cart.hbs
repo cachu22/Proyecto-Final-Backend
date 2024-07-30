@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="Title">TecniPC | Detalles del Carrito</title>
+    <!-- CSS de Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- CSS Propio -->
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body id="grilla-gral">
+    <header id="header-navegacion">
+        <!-- Menú de navegación -->
+        <nav class="navbar navbar-expand-lg bg-light w-100">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">
+                    <img src="/img/logo-inicio.png" alt="Logo" class="logo">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navegacion-web">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/">Inicio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/quienessomos">Quienes somos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/servicios">Servicios</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/galeria">Galería</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/contacto">Contacto</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <h1>TecniPC</h1>
+        <h2>Tu Carrito</h2>
+    </header>
+
+    <main id="cart">
+        <h1>Detalles del Carrito</h1>
+        <ul>
+            {{#each products}}
+            <div class="product">
+                <img src="{{this.product.thumbnails}}" alt="Imagen">
+                <h3>{{this.product.title}}</h3>
+                <p>{{this.product.description}}</p>
+                <p>Precio: {{this.product.price}}</p>
+                <p>Cantidad: {{this.quantity}}</p>
+            </div>
+            {{/each}}
+            <div>
+                <p>ID del Carrito: {{cart._id}}</p>
+            </div>
+        </ul>
+    </main>
+
+    <footer id="footer">
+        Web creada por Adrián Fernández. Todos los derechos reservados.
+    </footer>
+
+    <!-- Scripts de Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Script de SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+</body>
+</html>

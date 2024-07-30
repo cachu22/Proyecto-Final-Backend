@@ -1,0 +1,103 @@
+[
+  {
+    "id de carrito": 1,
+    "products": [
+      {
+        "id de producto": "6",
+        "quantity": 4,
+        "thumbnails": "https://picsum.photos/700/406?random",
+        "price": 100
+      },
+      {
+        "id de producto": "3",
+        "quantity": 3,
+        "thumbnails": "https://picsum.photos/700/411?random",
+        "price": "2342"
+      }
+    ]
+  },
+  {
+    "id de carrito": 2,
+    "products": [
+      {
+        "id de producto": "4",
+        "quantity": 2,
+        "thumbnails": "https://picsum.photos/700/404?random",
+        "price": 40
+      },
+      {
+        "id de producto": "1",
+        "quantity": 2,
+        "thumbnails": "https://picsum.photos/700/411?random",
+        "price": "20"
+      }
+    ]
+  },
+  {
+    "id de carrito": 3,
+    "products": [
+      {
+        "id de producto": "1",
+        "quantity": 1,
+        "thumbnails": "https://picsum.photos/700/401?random",
+        "price": 100
+      },
+      {
+        "id de producto": "3",
+        "quantity": 1,
+        "thumbnails": "https://picsum.photos/700/403?random",
+        "price": 1040
+      },
+      {
+        "id de producto": "4",
+        "quantity": 2,
+        "thumbnails": "https://picsum.photos/700/404?random",
+        "price": 40
+      },
+      {
+        "id de producto": "6",
+        "quantity": 7,
+        "thumbnails": "https://picsum.photos/700/406?random",
+        "price": 100
+      }
+    ]
+  },
+  {
+    "id de carrito": 4,
+    "products": [
+      {
+        "id de producto": "2",
+        "quantity": 5,
+        "thumbnails": "https://picsum.photos/700/410?random",
+        "price": "10"
+      }
+    ]
+  },
+  {
+    "id de carrito": 5,
+    "products": [
+      {
+        "id de producto": "2",
+        "quantity": 18,
+        "thumbnails": "https://picsum.photos/700/410?random",
+        "price": "10"
+      }
+    ]
+  },
+  {
+    "id de carrito": 6,
+    "products": []
+  },
+  {
+    "id de carrito": 7,
+    "products": []
+  },
+  {
+    "id de carrito": 8,
+    "products": []
+  },
+  {
+    "id de carrito": 9,
+    "products": []
+  }
+]
