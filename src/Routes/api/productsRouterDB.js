@@ -1,5 +1,6 @@
 import express from 'express';
 import productController from '../../controllers/product.controller.js';
+import { authenticateUser, authorizeRoles } from '../../middlewares/Auth.middleware.js';
 
 const mgProducts = express.Router();
 const {
@@ -33,12 +34,12 @@ mgProducts.get('/products/sort/:sortByPrice/:order', getProductsByPrice);
 mgProducts.get('/:pid', getOne);
 
 // Ruta para agregar un nuevo producto
-mgProducts.post('/', create);
+mgProducts.post('/', authenticateUser, authorizeRoles('admin', 'premium'), create);
 
 // Ruta para actualizar un producto por su ID
 mgProducts.put('/:pid', put);
 
 // Ruta para eliminar un producto por su ID
-mgProducts.delete('/:pid', deleteDate);
+mgProducts.delete('/:pid', authenticateUser, authorizeRoles('admin', 'premium'), deleteDate);
 
 export default mgProducts;

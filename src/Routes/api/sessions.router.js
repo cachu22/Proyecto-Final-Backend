@@ -133,12 +133,12 @@ sessionsRouter.post('/login', async (req, res) => {
         // Generar y enviar token JWT
         const token = generateToken({ id: result.user._id, email: result.user.email });
 
-        // Almacenar los datos del usuario en la sesión
+        // Almacenar los datos del usuario en la sesión, incluyendo el rol
         req.session.user = {
             first_name: result.user.first_name,
             last_name: result.user.last_name,
             email: result.user.email,
-            isAdmin: result.user.role === 'admin',
+            role: result.user.role,
             id: result.user._id
         };
 
@@ -147,7 +147,7 @@ sessionsRouter.post('/login', async (req, res) => {
             email: req.session.user.email,
             first_name: req.session.user.first_name,
             last_name: req.session.user.last_name,
-            isAdmin: req.session.user.isAdmin
+            role: req.session.user.role
         }), { maxAge: 1000000, httpOnly: true });
 
         logger.info('Usuario autenticado exitosamente - src/Routes/api/sessions.router.js', { user: req.session.user });

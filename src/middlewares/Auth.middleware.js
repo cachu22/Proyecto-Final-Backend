@@ -74,3 +74,30 @@ export const isAuthenticated = (req, res, next) => {
         return res.status(401).json({ status: 'error', message: 'Unauthorized' });
     }
 };
+
+export const authenticateUser = async (req, res, next) => {
+    const token = req.header('Authorization').replace('Bearer ', '');
+
+    try {
+        const decoded = jwt.verify(token, config.JWT_SECRET);
+        const user = await User.findById(decoded._id);
+
+        if (!user) {
+            throw new Error();
+        }
+
+        req.user = user;
+        next();
+    } catch (error) {
+        res.status(401).json({ status: 'error', message: 'No está autenticado' });
+    }
+};
+
+export const authorizeRoles = (...roles) => {
+    return (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            return res.status(403).json({ status: 'error', message: 'No tiene permisos para realizar esta acción' });
+        }
+        next();
+    };
+};

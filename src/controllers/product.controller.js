@@ -4,6 +4,7 @@ import { addProductError } from "../service/errors/info.js";
 import { ProductService } from "../service/index.js";
 import { generateProducts } from "../utils/generateProductsMock.js";
 import { logger } from "../utils/logger.js";
+import { userModel } from "../daos/MONGO/models/users.models.js";
 
 class ProductController {
     constructor() {
@@ -130,11 +131,10 @@ class ProductController {
         }
     };
 
-    // Crear un nuevo producto
     create = async (req, res) => {
         try {
             const { title, model, description, price, code, thumbnails, stock, category } = req.body;
-
+    
             if (!title || !model || !description || !price || !thumbnails || !code || !stock || !category) {
                 console.error('Error al crear el producto - Faltan datos para crear el producto - Log de /src/controllers/product.controller.js');
                 return res.status(400).json({
@@ -142,7 +142,12 @@ class ProductController {
                     message: 'Faltan datos para crear el producto'
                 });
             }
-
+    
+            let owner = 'admin';
+            if (req.user && req.user.role === 'premium') {
+                owner = req.user.email; // o req.user._id si prefieres almacenar el _id
+            }
+    
             const newProduct = {
                 title,
                 model,
@@ -151,9 +156,10 @@ class ProductController {
                 thumbnails,
                 code,
                 stock,
-                category
+                category,
+                owner
             };
-
+    
             const result = await this.productService.create(newProduct);
             res.status(201).json({ status: 'success', payload: result });
         } catch (error) {
@@ -177,15 +183,25 @@ class ProductController {
 
     // Eliminar un producto
     deleteDate = async (req, res) => {
-        const { pid } = req.params;
         try {
-            const result = await this.productService.deleteProduct(pid);
-            res.send({ status: 'success', payload: result });
+            const productId = req.params.id;
+            const product = await this.productService.delete(productId);
+    
+            if (!product) {
+                return res.status(404).json({ status: 'error', message: 'Producto no encontrado' });
+            }
+    
+            if (req.user.role !== 'admin' && product.owner !== req.user.email) {
+                return res.status(403).json({ status: 'error', message: 'No tiene permisos para eliminar este producto' });
+            }
+    
+            await this.productService.delete(productId);
+            res.status(200).json({ status: 'success', message: 'Producto eliminado correctamente' });
         } catch (error) {
-            logger.error('Error al eliminar el producto - Log de /src/controllers/product.controller.js:', error);
-            res.status(500).send({ status: 'error', message: 'Error al eliminar el producto', error: error.message });
+            console.error('Error al eliminar el producto - Log de /src/controllers/product.controller.js:', error);
+            res.status(500).json({ status: 'error', message: 'Error al eliminar el producto', error: error.message });
         }
-    };
+    }
 }
 
 export default ProductController;

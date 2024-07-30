@@ -19,13 +19,19 @@ const manager = new CartDaoMongo();
 viewsRouter.get('/', async (req, res) => {
     const { numPage, limit } = req.query;
     try {
-        // Consulta todos los productos desde la base de datos utilizando el manager de productos de Mongo
         const { docs, page, hasPrevPage, hasNextPage, prevPage, nextPage } = await ProductService.getAll({ limit, numPage });
 
-        // Verificar si el usuario está autenticado
         const user = req.session.user || {};
+        console.log('User from session:', user); // Depurar la información del usuario
 
-        // Renderiza la página principal (home) y pasa los productos como datos para su renderización
+        const isAdmin = user.role === 'admin';
+        const isPremium = user.role === 'premium';
+        const isAdminOrPremium = isAdmin || isPremium;
+
+        console.log('isAdmin:', isAdmin); // Para depuración
+        console.log('isPremium:', isPremium); // Para depuración
+        console.log('isAdminOrPremium:', isAdminOrPremium); // Para depuración
+
         res.render('home', {
             products: docs,
             page,
@@ -35,7 +41,9 @@ viewsRouter.get('/', async (req, res) => {
             nextPage,
             first_name: user.first_name || '',
             last_name: user.last_name || '',
-            isAdmin: user.isAdmin || false
+            isAdmin,
+            isPremium,
+            isAdminOrPremium
         });
 
         logger.info('Página principal renderizada con productos - src/Routes/views.router.js', { products: docs });

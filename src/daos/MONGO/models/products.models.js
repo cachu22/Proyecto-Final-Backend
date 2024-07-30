@@ -40,7 +40,11 @@ const productsSchema = new mongoose.Schema({
     type: String,
     index: true
   },
-  availability: Boolean
+  availability: Boolean,
+  owner: {
+    type: String,
+    default: 'admin'
+  }
 });
 
 productsSchema.plugin(mongoosePaginate);
