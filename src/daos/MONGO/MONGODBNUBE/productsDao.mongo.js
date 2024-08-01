@@ -83,7 +83,7 @@ class ProductDaosMongo {
             return newProduct;
         } catch (error) {
             logger.error('Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js:', error.message);
-            throw new Error('Error al agregar un nuevo producto: ' + error.message);
+            throw new Error('Error al agregar un nuevo producto: ' + error);
         }
     }
 

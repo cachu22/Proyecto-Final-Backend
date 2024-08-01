@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import UserController from '../../controllers/users.controller.js';
 import passport from 'passport';
+import { authenticateToken, authenticateUser, authorizeRoles } from '../../middlewares/Auth.middleware.js';
 
 const userController = new UserController()
 
@@ -14,7 +15,7 @@ const {
   deleteData
 } = new UserController();
 
-router.get('/', getAll);
+router.get('/', authenticateUser, authorizeRoles, getAll);
 router.get('/:uid', getOne);
 router.get('/user-info/:uid', getOneInfo);
 router.post('/', create);

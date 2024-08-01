@@ -130,28 +130,39 @@ class ProductController {
         }
     };
 
+    // Método asíncrono para manejar la creación de un nuevo producto
     create = async (req, res) => {
         try {
+            // Extrae los datos del producto del cuerpo de la solicitud
             const { title, model, description, price, code, thumbnails, stock, category } = req.body;
     
+            // Verifica si todos los campos necesarios están presentes
             if (!title || !model || !description || !price || !thumbnails || !code || !stock || !category) {
+                // Registra un error en la consola si faltan datos
                 console.error('Error al crear el producto - Faltan datos para crear el producto');
+                // Responde con un error 400 (Bad Request) y un mensaje de error
                 return res.status(400).json({ status: 'error', message: 'Faltan datos para crear el producto' });
             }
     
+            // Obtiene el ID y el rol del usuario desde la solicitud autenticada
             const userId = req.user?._id;
             const userRole = req.user?.role;
     
+            // Verifica si el ID del usuario está presente (es decir, si el usuario está autenticado)
             if (!userId) {
+                // Responde con un error 401 (Unauthorized) y un mensaje de error si el usuario no está autenticado
                 return res.status(401).json({ status: 'error', message: 'Usuario no autenticado' });
             }
     
-            let owner = 'admin'; 
-    
-            if (userRole === 'premium') {
-                owner = userId;
+            // Inicializa el campo 'owner' según el rol del usuario
+            let owner;
+            if (userRole === 'premium' || userRole === 'admin') {
+                owner = userId; // Usa el ID del usuario tanto para 'premium' como para 'admin'
+            } else {
+                return res.status(403).json({ status: 'error', message: 'Rol de usuario no autorizado para crear productos' });
             }
     
+            // Crea un objeto de nuevo producto con los datos proporcionados y el campo 'owner' determinado
             const newProduct = {
                 title,
                 model,
@@ -164,10 +175,15 @@ class ProductController {
                 owner
             };
     
+            // Llama al servicio de productos para crear el nuevo producto en la base de datos
             const result = await this.productService.create(newProduct);
+    
+            // Responde con un estado 201 (Created) y el producto creado en el payload
             res.status(201).json({ status: 'success', payload: result });
         } catch (error) {
+            // Registra un mensaje de error en la consola si ocurre una excepción
             console.error('Error al crear el producto:', error);
+            // Responde con un estado 500 (Internal Server Error) y un mensaje de error
             res.status(500).json({ status: 'error', message: 'Error al agregar el producto', error: error.message });
         }
     };

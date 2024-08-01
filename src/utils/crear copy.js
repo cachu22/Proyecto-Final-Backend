@@ -51,6 +51,6 @@ export function handleAddProduct(productData, manager, io) {
         logger.info('Producto agregado correctamente - src/utils/crearProducto.js:', newProduct); // Log de éxito
 
     } catch (error) {
-        logger.error('Error al agregar el producto - src/utils/crearProducto.js:', error); // Log de error
+        logger.error('Error al agregar el producto3 - src/utils/crearProducto.js:', error); // Log de error
     }
 }
