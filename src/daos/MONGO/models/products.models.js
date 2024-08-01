@@ -42,9 +42,10 @@ const productsSchema = new mongoose.Schema({
   },
   availability: Boolean,
   owner: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: 'User',
     default: 'admin'
-  }
+}
 });
 
 productsSchema.plugin(mongoosePaginate);

@@ -9,7 +9,7 @@ import routerCookie from './Pruebas/pruebas.router.js';
 import { cartsRouterMSG } from './api/carts.routerDB.js';
 import productsRouterDB from './api/productsRouterDB.js';
 import { mocking } from "./api/mockingProducts.router.js";
-import { userAuth } from "../middlewares/Auth.middleware.js";
+import { userAuth, authenticateUser, authorizeRoles } from "../middlewares/Auth.middleware.js";
 
 const routerApp = Router()
 

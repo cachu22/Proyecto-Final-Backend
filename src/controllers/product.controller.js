@@ -10,7 +10,6 @@ class ProductController {
     constructor() {
         this.productService = ProductService;
 
-        // Bind methods to ensure `this` refers to the instance of ProductController
         this.getAll = this.getAll.bind(this);
         this.getAllPaginated = this.getAllPaginated.bind(this);
         this.getProductsByCategory = this.getProductsByCategory.bind(this);
@@ -136,16 +135,21 @@ class ProductController {
             const { title, model, description, price, code, thumbnails, stock, category } = req.body;
     
             if (!title || !model || !description || !price || !thumbnails || !code || !stock || !category) {
-                console.error('Error al crear el producto - Faltan datos para crear el producto - Log de /src/controllers/product.controller.js');
-                return res.status(400).json({
-                    status: 'error',
-                    message: 'Faltan datos para crear el producto'
-                });
+                console.error('Error al crear el producto - Faltan datos para crear el producto');
+                return res.status(400).json({ status: 'error', message: 'Faltan datos para crear el producto' });
             }
     
-            let owner = 'admin';
-            if (req.user && req.user.role === 'premium') {
-                owner = req.user.email; // o req.user._id si prefieres almacenar el _id
+            const userId = req.user?._id;
+            const userRole = req.user?.role;
+    
+            if (!userId) {
+                return res.status(401).json({ status: 'error', message: 'Usuario no autenticado' });
+            }
+    
+            let owner = 'admin'; 
+    
+            if (userRole === 'premium') {
+                owner = userId;
             }
     
             const newProduct = {
@@ -153,8 +157,8 @@ class ProductController {
                 model,
                 description,
                 price,
-                thumbnails,
                 code,
+                thumbnails,
                 stock,
                 category,
                 owner
@@ -163,7 +167,7 @@ class ProductController {
             const result = await this.productService.create(newProduct);
             res.status(201).json({ status: 'success', payload: result });
         } catch (error) {
-            console.error('Error al crear el producto - Log de /src/controllers/product.controller.js:', error);
+            console.error('Error al crear el producto:', error);
             res.status(500).json({ status: 'error', message: 'Error al agregar el producto', error: error.message });
         }
     };
@@ -185,23 +189,41 @@ class ProductController {
     deleteDate = async (req, res) => {
         try {
             const productId = req.params.id;
-            const product = await this.productService.delete(productId);
+            const userId = req.session?.user?._id;
+            const userRole = req.session?.user?.role;
     
+            // Verificar si el usuario está autenticado
+            if (!userId) {
+                return res.status(401).json({ status: 'error', message: 'Usuario no autenticado' });
+            }
+    
+            // Buscar el producto
+            const product = await this.productService.findById(productId);
+            
+            // Verificar si el producto existe
             if (!product) {
                 return res.status(404).json({ status: 'error', message: 'Producto no encontrado' });
             }
     
-            if (req.user.role !== 'admin' && product.owner !== req.user.email) {
-                return res.status(403).json({ status: 'error', message: 'No tiene permisos para eliminar este producto' });
+            // Permitir la eliminación si el usuario es admin
+            if (userRole === 'admin') {
+                await this.productService.delete(productId);
+                return res.status(200).json({ status: 'success', message: 'Producto eliminado correctamente' });
             }
     
-            await this.productService.delete(productId);
-            res.status(200).json({ status: 'success', message: 'Producto eliminado correctamente' });
+            // Permitir la eliminación si el usuario es premium y es el propietario del producto
+            if (userRole === 'premium' && product.owner.equals(userId)) {
+                await this.productService.delete(productId);
+                return res.status(200).json({ status: 'success', message: 'Producto eliminado correctamente' });
+            }
+    
+            // Denegar el acceso si el usuario no tiene permisos
+            return res.status(403).json({ status: 'error', message: 'No tiene permisos para eliminar este producto' });
         } catch (error) {
             console.error('Error al eliminar el producto - Log de /src/controllers/product.controller.js:', error);
             res.status(500).json({ status: 'error', message: 'Error al eliminar el producto', error: error.message });
         }
-    }
+    };
 }
 
 export default ProductController;

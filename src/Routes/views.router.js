@@ -3,7 +3,7 @@ import fs from 'fs';
 import { __dirname } from "../utils/utils.js";
 import { multerSingleUploader } from "../utils/multer.js";
 import CartDaoMongo from "../daos/MONGO/MONGODBNUBE/cartsDao.mongo.js";
-import { adminOrUserAuth, adminAuth } from "../middlewares/Auth.middleware.js";
+import { adminOrUserAuth, adminAuth, premiumAuth } from "../middlewares/Auth.middleware.js";
 import { ProductService, userService } from "../service/index.js";
 import { logger } from "../utils/logger.js";
 
@@ -135,7 +135,15 @@ viewsRouter.get('/register', (req, res) => {
     logger.info('Página de registro renderizada - src/Routes/views.router.js');
 });
 
-viewsRouter.get('/GestionProductos', adminAuth, (req, res) => {
+viewsRouter.get('/GestionProductos', (req, res, next) => {
+    if (req.session?.user?.role === 'admin' || req.session?.user?.role === 'premium') {
+        logger.info('Acceso permitido: usuario es admin o premium - Log de src/Routes/views.router.js');
+        next(); // Permitir acceso si es admin o premium
+    } else {
+        logger.warning('Acceso denegado: usuario no es admin ni premium - Log de src/Routes/views.router.js');
+        res.status(401).send('Acceso no autorizado');
+    }
+}, (req, res) => {
     res.render('GestionDeProductos');
     logger.info('Página de gestión de productos renderizada para el usuario - src/Routes/views.router.js', { user: req.session.user });
 });

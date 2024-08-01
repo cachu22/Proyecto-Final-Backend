@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import { PRIVATE_KEY } from '../utils/jwt.js';
 import { userService } from '../service/index.js';
 import { logger } from '../utils/logger.js';
+import { objectConfig } from '../config/index.js';
 
 // Middleware de autorización para administradores y usuarios normales
 export function adminOrUserAuth(req, res, next) {
@@ -9,18 +10,29 @@ export function adminOrUserAuth(req, res, next) {
         logger.info('Acceso permitido: usuario autenticado en la sesión - Log de /src/middlewares/Auth.middleware.js');
         next(); // Permitir acceso si hay una sesión de usuario válida
     } else {
-        logger.warn('Acceso denegado: usuario no autenticado - Log de /src/middlewares/Auth.middleware.js');
+        logger.warning('Acceso denegado: usuario no autenticado - Log de /src/middlewares/Auth.middleware.js');
         res.status(403).send('Acceso denegado: Debes iniciar sesión');
     }
 }
 
 // Middleware de autorización solo para administradores
 export function adminAuth(req, res, next) {
-    if (req.session?.user?.isAdmin) {
+    if (req.session?.user?.role === 'admin') {
         logger.info('Acceso permitido: usuario es un administrador - Log de /src/middlewares/Auth.middleware.js');
         next(); // Permitir acceso si es un administrador
     } else {
-        logger.warn('Acceso denegado: usuario no es administrador - Log de /src/middlewares/Auth.middleware.js');
+        logger.warning('Acceso denegado: usuario no es administrador - Log de /src/middlewares/Auth.middleware.js');
+        res.status(401).send('Acceso no autorizado');
+    }
+}
+
+// Middleware de autorización solo para usuario Premium
+export function premiumAuth(req, res, next) {
+    if (req.session?.user?.role === 'premium') {
+        logger.info('Acceso permitido: usuario es premium - Log de /src/middlewares/Auth.middleware.js');
+        next(); // Permitir acceso si es premium
+    } else {
+        logger.warning('Acceso denegado: usuario no es premium - Log de /src/middlewares/Auth.middleware.js');
         res.status(401).send('Acceso no autorizado');
     }
 }
@@ -31,7 +43,7 @@ export function userAuth(req, res, next) {
         logger.info('Acceso permitido: usuario autenticado - Log de /src/middlewares/Auth.middleware.js');
         next();
     } else {
-        logger.warn('Acceso denegado: usuario no autenticado - Log de /src/middlewares/Auth.middleware.js');
+        logger.warning('Acceso denegado: usuario no autenticado - Log de /src/middlewares/Auth.middleware.js');
         res.status(401).send('Acceso no autorizado');
     }
 }
@@ -40,18 +52,12 @@ export const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
-    if (!token) {
-        logger.warn('Token no proporcionado - Log de /src/middlewares/Auth.middleware.js');
-        return res.status(401).send({ status: 'error', message: 'Token no proporcionado' });
-    }
+    if (token == null) return res.status(401).json({ status: 'error', message: 'Token no proporcionado' });
 
-    jwt.verify(token, PRIVATE_KEY, (err, user) => {
-        if (err) {
-            logger.error('Token inválido - Log de /src/middlewares/Auth.middleware.js', err);
-            return res.status(403).send({ status: 'error', message: 'Token inválido' });
-        }
+    jwt.verify(token, objectConfig.jwt_private_key, (err, user) => {
+        if (err) return res.status(403).json({ status: 'error', message: 'Token inválido' });
+
         req.user = user;
-        logger.info('Token verificado con éxito - Log de /src/middlewares/Auth.middleware.js');
         next();
     });
 };
@@ -59,7 +65,7 @@ export const authenticateToken = (req, res, next) => {
 export const isAuthenticated = (req, res, next) => {
     const token = req.cookies['token'];
     if (!token) {
-        logger.warn('No token provided - Log de /src/middlewares/Auth.middleware.js');
+        logger.warning('No token provided - Log de /src/middlewares/Auth.middleware.js');
         return res.status(401).json({ status: 'error', message: 'Unauthorized' });
     }
 
@@ -76,28 +82,37 @@ export const isAuthenticated = (req, res, next) => {
 };
 
 export const authenticateUser = async (req, res, next) => {
-    const token = req.header('Authorization').replace('Bearer ', '');
-
     try {
-        const decoded = jwt.verify(token, config.JWT_SECRET);
-        const user = await User.findById(decoded._id);
-
-        if (!user) {
-            throw new Error();
+        const userId = req.user && req.user.id;
+        if (!userId) {
+            return res.status(401).json({ status: 'error', message: 'Usuario no autenticado' });
         }
 
+        const user = await userService.getUser(userId);
+        if (!user) {
+            return res.status(401).json({ status: 'error', message: 'Usuario no encontrado' });
+        }
+
+        console.log('Usuario encontrado:', user);
         req.user = user;
         next();
     } catch (error) {
-        res.status(401).json({ status: 'error', message: 'No está autenticado' });
+        res.status(500).json({ status: 'error', message: 'Error en la autenticación del usuario', error: error.message });
     }
 };
 
-export const authorizeRoles = (...roles) => {
-    return (req, res, next) => {
-        if (!roles.includes(req.user.role)) {
-            return res.status(403).json({ status: 'error', message: 'No tiene permisos para realizar esta acción' });
-        }
-        next();
-    };
+export const authorizeRoles = (req, res, next) => {
+    if (typeof res.status !== 'function') {
+        console.error('res no es un objeto de respuesta de Express');
+        return next(new Error('Invalid response object'));
+    }
+
+    const userRole = req.user && req.user.role;
+    if (!userRole || (userRole !== 'admin' && userRole !== 'premium')) {
+        console.error('Error en authorizeRoles:', req.user);
+        return res.status(403).json({ status: 'error', message: 'No tiene permisos para realizar esta acción' });
+    }
+
+    console.log('Rol del usuario autorizado:', userRole);
+    next();
 };

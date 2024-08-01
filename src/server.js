@@ -24,6 +24,7 @@ import ProductDaoFS from './daos/MONGO/MONGODBLOCAL/productDao.FS.js';
 import { productsSocket } from './utils/productsSocket.js';
 import { handleErrors } from './middlewares/errors/index.js';
 import { addLogger, logger } from './utils/logger.js';
+import swaggerUiExpress from 'swagger-ui-express';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -45,9 +46,19 @@ connectDb().then(() => {
     process.exit(1);
 });
 
+                            // const swaggerOptions = {
+                            //     definition: {
+                            //         openapi: {
+                            //         info: {
+                            //             title: 'Documentación de app para la adopción de mascotas',
+                            //             description: 'API para documentar app de mascota'
+                            //         }
+                            //     },
+                            //     apis: [`${__dirname}/docs/**/*.taml`]
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'Public')));
+app.use(express.static(path.join(__dirname, 'Public')))
 app.use(cookieParser());
 initializePassport();
 app.use(passport.initialize());
@@ -147,4 +158,10 @@ export const getServer = () => httpServer.listen(port, error => {
 });
 
 logger.info("Servidor inicializado - /server.js");
+
+app.use((err, req, res, next) => {
+    console.error('Error manejado por el manejador de errores:', err);
+    res.status(500).json({ status: 'error', message: err.message });
+});
+
 getServer();

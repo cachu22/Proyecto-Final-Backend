@@ -35,10 +35,10 @@
         <h1>TecniPC</h1>
         <h2>Gestión de Productos</h2>
     </header>
-    
+
     <main id="container-gestionProductos">
         <div class="Formulario-filtro">
-            <form action="/api/mgProducts" method="POST" class="form-group w-150">
+            <form action="/api/mgProducts" method="POST" id="productForm" class="form-group w-150">
                 <label for="title">Titulo del producto</label>
                 <input type="text" name="title" id="title" class="form-control">
                 <label for="model">Modelo</label>
@@ -68,5 +68,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/js/gestionProductos.js"></script>
 </body>
 </html>

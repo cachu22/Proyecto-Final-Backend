@@ -127,35 +127,40 @@ sessionsRouter.post('/login', async (req, res) => {
 
     logger.info('Recibiendo solicitud de login - src/Routes/api/sessions.router.js', { email });
 
-    const result = await authenticateUser(email, password);
+    try {
+        const result = await authenticateUser(email, password);
 
-    if (result.success) {
-        // Generar y enviar token JWT
-        const token = generateToken({ id: result.user._id, email: result.user.email });
+        if (result.success) {
+            // Generar y enviar token JWT
+            const token = generateToken({ id: result.user._id, email: result.user.email });
 
-        // Almacenar los datos del usuario en la sesión, incluyendo el rol
-        req.session.user = {
-            first_name: result.user.first_name,
-            last_name: result.user.last_name,
-            email: result.user.email,
-            role: result.user.role,
-            id: result.user._id
-        };
+            // Almacenar los datos del usuario en la sesión, incluyendo el rol
+            req.session.user = {
+                first_name: result.user.first_name,
+                last_name: result.user.last_name,
+                email: result.user.email,
+                role: result.user.role,
+                id: result.user._id
+            };
 
-        // Establecer una cookie con datos del usuario
-        res.cookie('user', JSON.stringify({
-            email: req.session.user.email,
-            first_name: req.session.user.first_name,
-            last_name: req.session.user.last_name,
-            role: req.session.user.role
-        }), { maxAge: 1000000, httpOnly: true });
+            // Establecer una cookie con datos del usuario
+            res.cookie('user', JSON.stringify({
+                email: req.session.user.email,
+                first_name: req.session.user.first_name,
+                last_name: req.session.user.last_name,
+                role: req.session.user.role
+            }), { maxAge: 1000000, httpOnly: true });
 
-        logger.info('Usuario autenticado exitosamente - src/Routes/api/sessions.router.js', { user: req.session.user });
+            logger.info('Usuario autenticado exitosamente - src/Routes/api/sessions.router.js', { user: req.session.user });
 
-        // Enviar la respuesta con el token JWT y redirigir a la ruta principal
-        res.json({ status: 'success', token, redirectTo: '/' });
-    } else {
-        res.status(401).json({ message: result.message });
+            // Enviar la respuesta con el token JWT y redirigir a la ruta principal
+            res.json({ status: 'success', token, redirectTo: '/' });
+        } else {
+            res.status(401).json({ status: 'error', message: result.message });
+        }
+    } catch (error) {
+        logger.error('Error en la autenticación del usuario - src/Routes/api/sessions.router.js', error);
+        res.status(500).json({ status: 'error', message: 'Error en la autenticación del usuario', error: error.message });
     }
 });
 
