@@ -48,6 +48,12 @@ mgProducts.post('/', authenticateToken, authenticateUser, authorizeRoles, create
 mgProducts.put('/:pid', validateProductParams, authenticateToken, authenticateUser, authorizeRoles, put);
 
 // Ruta para eliminar un producto por su ID
-mgProducts.delete('/:pid', validateProductParams, authenticateToken, authenticateUser, authorizeRoles, deleteDate);
+// mgProducts.delete('/:pid', validateProductParams, authenticateToken, authenticateUser, authorizeRoles, deleteDate);
+
+//verificacion de parametros
+mgProducts.delete('/:id', authenticateToken, authenticateUser, authorizeRoles, (req, res, next) => {
+    console.log('Parámetros de la solicitud:', req.params);
+    next();
+}, deleteDate);
 
 export default mgProducts;

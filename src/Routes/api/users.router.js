@@ -15,7 +15,7 @@ const {
   deleteData
 } = new UserController();
 
-router.get('/', authenticateUser, authorizeRoles, getAll);
+router.get('/', authenticateToken, authenticateUser, authorizeRoles, getAll);
 router.get('/:uid', getOne);
 router.get('/user-info/:uid', getOneInfo);
 router.post('/', create);

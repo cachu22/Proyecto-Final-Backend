@@ -483,3 +483,66 @@ error: Error processing password reset request: logger.warn is not a function {"
 [31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T09:30:12.128Z"}
 [31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T09:30:13.441Z"}
 [31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T09:30:19.725Z"}
+[31merror[39m: ID de usuario inválido - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js: {"timestamp":"2024-08-02T12:02:18.726Z"}
+[31merror[39m: El código de producto ya está en uso - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T12:03:48.986Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T12:03:48.988Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T12:03:55.455Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T12:04:03.318Z"}
+[33mwarning[39m: Acceso denegado: usuario no es administrador - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-08-02T12:06:11.575Z"}
+[31merror[39m: El carrito no existe con ID - Log de /src/daos/MONGO/MONGODBNUBE/cartsDao.mongo.js: {"timestamp":"2024-08-02T12:09:16.980Z"}
+[31merror[39m: Error al agregar el producto al carrito - Log de /src/daos/MONGO/MONGODBNUBE/cartsDao.mongo.js: {"timestamp":"2024-08-02T12:09:16.983Z"}
+[31merror[39m: Error al agregar el producto al carrito - Log de /src/controllers/cart.controller.js: Error al agregar el producto al carrito: El carrito no existe {"stack":"Error: Error al agregar el producto al carrito: El carrito no existe\n    at CartDaoMongo.addProductToCart (file:///C:/Users/adria/Documents/CoderHouse/Backend/Entregas/37-Practica-de-integracion-sobre-tu-ecommerce/src/daos/MONGO/MONGODBNUBE/cartsDao.mongo.js:82:19)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async CartRepository.addProductToCart (file:///C:/Users/adria/Documents/CoderHouse/Backend/Entregas/37-Practica-de-integracion-sobre-tu-ecommerce/src/repositories/cart.repository.js:32:29)\n    at async addProductToCart (file:///C:/Users/adria/Documents/CoderHouse/Backend/Entregas/37-Practica-de-integracion-sobre-tu-ecommerce/src/controllers/cart.controller.js:94:28)","timestamp":"2024-08-02T12:09:16.984Z"}
+[31merror[39m: El carrito no existe con ID - Log de /src/daos/MONGO/MONGODBNUBE/cartsDao.mongo.js: {"timestamp":"2024-08-02T12:09:19.822Z"}
+[31merror[39m: Error al agregar el producto al carrito - Log de /src/daos/MONGO/MONGODBNUBE/cartsDao.mongo.js: {"timestamp":"2024-08-02T12:09:19.823Z"}
+[31merror[39m: Error al agregar el producto al carrito - Log de /src/controllers/cart.controller.js: Error al agregar el producto al carrito: El carrito no existe {"stack":"Error: Error al agregar el producto al carrito: El carrito no existe\n    at CartDaoMongo.addProductToCart (file:///C:/Users/adria/Documents/CoderHouse/Backend/Entregas/37-Practica-de-integracion-sobre-tu-ecommerce/src/daos/MONGO/MONGODBNUBE/cartsDao.mongo.js:82:19)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async CartRepository.addProductToCart (file:///C:/Users/adria/Documents/CoderHouse/Backend/Entregas/37-Practica-de-integracion-sobre-tu-ecommerce/src/repositories/cart.repository.js:32:29)\n    at async addProductToCart (file:///C:/Users/adria/Documents/CoderHouse/Backend/Entregas/37-Practica-de-integracion-sobre-tu-ecommerce/src/controllers/cart.controller.js:94:28)","timestamp":"2024-08-02T12:09:19.824Z"}
+[31merror[39m: ID de usuario inválido - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js: {"timestamp":"2024-08-02T12:21:42.311Z"}
+[31merror[39m: ID de usuario inválido - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js: {"timestamp":"2024-08-02T12:22:35.383Z"}
+[31merror[39m: ID de usuario inválido - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js: {"timestamp":"2024-08-02T12:29:45.952Z"}
+[33mwarning[39m: Acceso denegado: usuario no es admin ni premium - Log de src/Routes/views.router.js {"timestamp":"2024-08-02T14:03:39.609Z"}
+[33mwarning[39m: Acceso denegado: usuario no es admin ni premium - Log de src/Routes/views.router.js {"timestamp":"2024-08-02T14:05:11.845Z"}
+[33mwarning[39m: Acceso denegado: usuario no es admin ni premium - Log de src/Routes/views.router.js {"timestamp":"2024-08-02T14:08:35.549Z"}
+[33mwarning[39m: Acceso denegado: usuario no es admin ni premium - Log de src/Routes/views.router.js {"timestamp":"2024-08-02T14:10:20.284Z"}
+[33mwarning[39m: Acceso denegado: usuario no es admin ni premium - Log de src/Routes/views.router.js {"timestamp":"2024-08-02T14:12:54.094Z"}
+[33mwarning[39m: Acceso denegado: usuario no es admin ni premium - Log de src/Routes/views.router.js {"timestamp":"2024-08-02T14:16:19.594Z"}
+[33mwarning[39m: Acceso denegado: usuario no es admin ni premium - Log de src/Routes/views.router.js {"timestamp":"2024-08-02T14:17:24.987Z"}
+[33mwarning[39m: Acceso denegado: usuario no es admin ni premium - Log de src/Routes/views.router.js {"timestamp":"2024-08-02T14:17:43.091Z"}
+[33mwarning[39m: Acceso denegado: usuario no es admin ni premium - Log de src/Routes/views.router.js {"timestamp":"2024-08-02T14:21:53.327Z"}
+[33mwarning[39m: Acceso denegado: usuario no es administrador - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-08-02T14:22:51.513Z"}
+[33mwarning[39m: Acceso denegado: usuario no autenticado - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-08-02T14:24:59.671Z"}
+[33mwarning[39m: Acceso denegado: usuario no autenticado - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-08-02T14:25:02.626Z"}
+[33mwarning[39m: Acceso denegado: usuario no autenticado - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-08-02T14:25:03.420Z"}
+[33mwarning[39m: Acceso denegado: usuario no autenticado - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-08-02T14:25:03.537Z"}
+[33mwarning[39m: Acceso denegado: usuario no autenticado - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-08-02T14:25:08.746Z"}
+[33mwarning[39m: Acceso denegado: usuario no autenticado - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-08-02T14:25:09.324Z"}
+[33mwarning[39m: Acceso denegado: usuario no autenticado - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-08-02T14:25:09.551Z"}
+[33mwarning[39m: Acceso denegado: usuario no autenticado - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-08-02T14:25:09.653Z"}
+[33mwarning[39m: Acceso denegado: usuario no autenticado - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-08-02T14:25:09.806Z"}
+[33mwarning[39m: Acceso denegado: usuario no autenticado - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-08-02T14:25:10.152Z"}
+[33mwarning[39m: Acceso denegado: usuario no autenticado - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-08-02T14:25:10.400Z"}
+[33mwarning[39m: Acceso denegado: usuario no autenticado - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-08-02T14:25:10.627Z"}
+[33mwarning[39m: Acceso denegado: usuario no autenticado - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-08-02T14:25:10.851Z"}
+[33mwarning[39m: Acceso denegado: usuario no autenticado - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-08-02T14:25:11.052Z"}
+[33mwarning[39m: Acceso denegado: usuario no autenticado - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-08-02T14:25:11.305Z"}
+[33mwarning[39m: Acceso denegado: usuario no autenticado - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-08-02T14:25:11.443Z"}
+[31merror[39m: El código de producto ya está en uso - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T15:06:03.072Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T15:06:03.130Z"}
+[31merror[39m: ID de producto inválido - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T15:18:23.388Z"}
+[31merror[39m: ID de producto inválido - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T15:18:39.253Z"}
+[31merror[39m: ID de producto inválido - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T15:20:37.150Z"}
+[31merror[39m: ID de producto inválido - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T15:49:39.170Z"}
+[31merror[39m: Error al obtener el producto - Log de /src/controllers/product.controller.js: mongoose is not defined {"stack":"ReferenceError: mongoose is not defined\n    at ProductController.getOne (file:///C:/Users/adria/Documents/CoderHouse/Backend/Entregas/37-Practica-de-integracion-sobre-tu-ecommerce/src/controllers/product.controller.js:76:13)\n    at Layer.handle [as handle_request] (C:\\Users\\adria\\Documents\\CoderHouse\\Backend\\Entregas\\37-Practica-de-integracion-sobre-tu-ecommerce\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at next (C:\\Users\\adria\\Documents\\CoderHouse\\Backend\\Entregas\\37-Practica-de-integracion-sobre-tu-ecommerce\\node_modules\\express\\lib\\router\\route.js:149:13)\n    at validateProductParams (file:///C:/Users/adria/Documents/CoderHouse/Backend/Entregas/37-Practica-de-integracion-sobre-tu-ecommerce/src/Routes/api/productsRouterDB.js:23:5)\n    at Layer.handle [as handle_request] (C:\\Users\\adria\\Documents\\CoderHouse\\Backend\\Entregas\\37-Practica-de-integracion-sobre-tu-ecommerce\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at next (C:\\Users\\adria\\Documents\\CoderHouse\\Backend\\Entregas\\37-Practica-de-integracion-sobre-tu-ecommerce\\node_modules\\express\\lib\\router\\route.js:149:13)\n    at Route.dispatch (C:\\Users\\adria\\Documents\\CoderHouse\\Backend\\Entregas\\37-Practica-de-integracion-sobre-tu-ecommerce\\node_modules\\express\\lib\\router\\route.js:119:3)\n    at Layer.handle [as handle_request] (C:\\Users\\adria\\Documents\\CoderHouse\\Backend\\Entregas\\37-Practica-de-integracion-sobre-tu-ecommerce\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at C:\\Users\\adria\\Documents\\CoderHouse\\Backend\\Entregas\\37-Practica-de-integracion-sobre-tu-ecommerce\\node_modules\\express\\lib\\router\\index.js:284:15\n    at param (C:\\Users\\adria\\Documents\\CoderHouse\\Backend\\Entregas\\37-Practica-de-integracion-sobre-tu-ecommerce\\node_modules\\express\\lib\\router\\index.js:365:14)","timestamp":"2024-08-02T15:53:07.241Z"}
+[31merror[39m: ID de producto inválido - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T15:54:17.101Z"}
+[31merror[39m: ID de producto inválido - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T15:55:20.845Z"}
+[31merror[39m: ID de producto inválido - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T15:57:13.824Z"}
+[31merror[39m: ID de producto inválido - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T15:58:00.113Z"}
+[31merror[39m: ID de producto inválido - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T16:06:52.112Z"}
+[31merror[39m: ID de producto inválido - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T16:08:33.555Z"}
+[31merror[39m: El código de producto ya está en uso - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T21:31:55.846Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T21:31:55.849Z"}
+[31merror[39m: Error - Log de /src/middlewares/errors/index.js: {"timestamp":"2024-08-02T21:32:01.678Z"}
+[31merror[39m: Causa del error: {"timestamp":"2024-08-02T21:32:01.679Z"}
+[31merror[39m: El código de producto ya está en uso - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T22:51:11.716Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T22:51:11.719Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T22:51:46.069Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T22:51:49.681Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T22:51:57.694Z"}

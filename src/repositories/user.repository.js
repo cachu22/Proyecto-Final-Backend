@@ -21,13 +21,14 @@ export default class UserRepository {
         try {
             logger.info(`Fetching user info with filter: ${JSON.stringify(filter)}`);
             const user = await this.userDao.getOneInfo(filter);
-            return user ? new UserDto(user) : null;
+            // return user ? new UserDto(user) : null;  -  Se comenta porque solo necesito el mail
+            return user ? { email: user.email } : null;
         } catch (error) {
             logger.error('Error fetching user info:', error);
             throw error;
         }
-    }
-
+    }        
+    
     createUser = async (user) => {
         const newUser = new UserDto(user);
         const createdUser = await this.userDao.create(newUser);

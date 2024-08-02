@@ -26,7 +26,7 @@ class UserDaoMongo {
     try {
         const user = await userModel.findOne(filter);
         if (!user) {
-            logger.warning('Usuario no encontrado con el filtro:', filter); // Reemplaza warn por warning
+            logger.warning('Usuario no encontrado con el filtro:', filter);
             throw new Error('Usuario no encontrado');
         }
         return user;
