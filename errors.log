@@ -475,3 +475,11 @@ error: Error processing password reset request: logger.warn is not a function {"
 [31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-01T14:18:07.547Z"}
 [31merror[39m: El código de producto ya está en uso - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-01T14:18:33.086Z"}
 [31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-01T14:18:33.086Z"}
+[31merror[39m: El código de producto ya está en uso - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T08:56:40.300Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T08:56:40.301Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T08:56:46.359Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T08:56:49.098Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T09:29:47.136Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T09:30:12.128Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T09:30:13.441Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-08-02T09:30:19.725Z"}

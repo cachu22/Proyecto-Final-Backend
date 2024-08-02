@@ -17,8 +17,13 @@ export const createHash = password => {
 };
 
 // Función para validar la contraseña
-export const isValidPassword = (user, password) => {
-    const isValid = bcrypt.compareSync(password, user.password);
-    logger.info('Validación de contraseña - src/utils/bcrypt.js:', isValid ? 'Éxito' : 'Fallo');
-    return isValid;
+export const isValidPassword = async (user, password) => {
+    try {
+        const isValid = await bcrypt.compare(password, user.password);
+        logger.info('Validación de contraseña - src/utils/bcrypt.js:', isValid ? 'Éxito' : 'Fallo');
+        return isValid;
+    } catch (error) {
+        logger.error('Error en la validación de contraseña - src/utils/bcrypt.js:', error);
+        throw error;
+    }
 };

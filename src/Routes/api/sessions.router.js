@@ -247,24 +247,32 @@ sessionsRouter.post('/send-reset-email', async (req, res) => {
 
 sessionsRouter.post('/reset/:token', async (req, res) => {
     try {
-      const { token } = req.params;
-      const { password } = req.body;
+        const { token } = req.params;
+        const { password } = req.body;
   
-      const user = await userService.get({ resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } });
-      if (!user) {
-        return res.status(400).json({ error: 'Token inválido o expirado.' });
-      }
-  
-      user.password = await bcrypt.hash(password, 10);
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpires = undefined;
-  
-      await user.save();
-      res.status(200).json({ message: 'Contraseña restablecida con éxito.' });
+        // Encuentra al usuario por el token y verifica si el token no ha expirado
+        const user = await userService.get({ resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } });
+        if (!user) {
+            return res.status(400).json({ error: 'Token inválido o expirado.' });
+        }
+
+        // Compara la nueva contraseña con la antigua
+        const isSamePassword = await isValidPassword(user, password);
+        if (isSamePassword) {
+            return res.status(400).json({ message: 'No puedes usar la misma contraseña que la anterior.' });
+        }
+
+        // Hashear la nueva contraseña
+        user.password = createHash(password);
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+
+        await user.save();
+        res.status(200).json({ message: 'Contraseña restablecida con éxito.' });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Error al restablecer la contraseña.' });
+        console.error(error);
+        res.status(500).json({ error: 'Error al restablecer la contraseña.' });
     }
-  });
+});
 
 export default sessionsRouter;
