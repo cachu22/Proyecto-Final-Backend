@@ -50,13 +50,13 @@
         <h1>Detalles del Carrito</h1>
         <ul>
             {{#each products}}
-            <div class="product">
-                <img src="{{this.product.thumbnails}}" alt="Imagen">
-                <h3>{{this.product.title}}</h3>
-                <p>{{this.product.description}}</p>
-                <p>Precio: {{this.product.price}}</p>
-                <p>Cantidad: {{this.quantity}}</p>
-            </div>
+                <div class="product">
+                    <img src="{{this.product.thumbnails}}" alt="Imagen">
+                    <h3>{{this.product.title}}</h3>
+                    <p>{{this.product.description}}</p>
+                    <p>Precio: {{this.product.price}}</p>
+                    <p>Cantidad: {{this.quantity}}</p>
+                </div>
             {{/each}}
             <div>
                 <p>ID del Carrito: {{cart._id}}</p>
