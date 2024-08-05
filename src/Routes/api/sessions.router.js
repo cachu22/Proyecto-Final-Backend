@@ -132,7 +132,7 @@ sessionsRouter.post('/login', async (req, res) => {
 
         if (result.success) {
             // Generar y enviar token JWT
-            const token = generateToken({ id: result.user._id, email: result.user.email });
+            const token = generateToken({ id: result.user._id, email: result.user.email, role: result.user.role });
 
             // Almacenar los datos del usuario en la sesión, incluyendo el rol
             req.session.user = {

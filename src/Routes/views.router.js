@@ -165,6 +165,21 @@ viewsRouter.get('/GestionProductos', (req, res, next) => {
     logger.info('Página de gestión de productos renderizada para el usuario - src/Routes/views.router.js', { user: req.session.user });
 });
 
+// Ruta para gestión de usuarios (disponible solo para administradores)
+viewsRouter.get('/gestionDeUsuarios', (req, res, next) => {
+    if (req.session?.user?.role === 'admin') {
+        logger.info('Acceso permitido: usuario es admin - Log de src/Routes/views.router.js');
+        next(); // Permitir acceso si es admin
+    } else {
+        logger.warning('Acceso denegado: usuario no es admin - Log de src/Routes/views.router.js');
+        res.status(401).send('Acceso no autorizado');
+    }
+}, (req, res) => {
+    res.render('gestionDeUsuarios');
+    logger.info('Página de gestión de usuarios renderizada para el usuario - src/Routes/views.router.js', { user: req.session.user });
+});
+
+
 viewsRouter.get('/realtimeproducts', adminOrUserAuth, (req, res) => {
     res.render('realTimeProducts', { products: productsData });
     logger.info('Página de productos en tiempo real renderizada - src/Routes/views.router.js', { products: productsData });

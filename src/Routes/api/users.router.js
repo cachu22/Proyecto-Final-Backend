@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import UserController from '../../controllers/users.controller.js';
 import passport from 'passport';
-import { authenticateToken, authenticateUser, authorizeRoles } from '../../middlewares/Auth.middleware.js';
+import { authenticateToken, adminAuth } from '../../middlewares/Auth.middleware.js';
 
 const userController = new UserController()
 
@@ -12,14 +12,16 @@ const {
   getOneInfo,
   create,
   update,
-  deleteData
+  deleteData,
+  changeUserRole
 } = new UserController();
 
-router.get('/', authenticateToken, authenticateUser, authorizeRoles, getAll);
+router.get('/', authenticateToken, adminAuth, getAll);
 router.get('/:uid', getOne);
 router.get('/user-info/:uid', getOneInfo);
 router.post('/', create);
 router.put('/:uid', update);
 router.delete('/:uid', deleteData);
+router.put('/premium/:uid', authenticateToken, adminAuth, changeUserRole);
 
 export default router;

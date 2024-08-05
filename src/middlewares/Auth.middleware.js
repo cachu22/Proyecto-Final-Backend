@@ -3,6 +3,9 @@ import { PRIVATE_KEY } from '../utils/jwt.js';
 import { userService } from '../service/index.js';
 import { logger } from '../utils/logger.js';
 import { objectConfig } from '../config/index.js';
+import { ProductService } from '../service/index.js';
+
+const productService = ProductService
 
 // Middleware de autorización para administradores y usuarios normales
 export function adminOrUserAuth(req, res, next) {
@@ -16,15 +19,21 @@ export function adminOrUserAuth(req, res, next) {
 }
 
 // Middleware de autorización solo para administradores
-export function adminAuth(req, res, next) {
-    if (req.session?.user?.role === 'admin') {
-        logger.info('Acceso permitido: usuario es un administrador - Log de /src/middlewares/Auth.middleware.js');
-        next(); // Permitir acceso si es un administrador
-    } else {
-        logger.warning('Acceso denegado: usuario no es administrador - Log de /src/middlewares/Auth.middleware.js');
-        res.status(401).send('Acceso no autorizado');
+export const adminAuth = (req, res, next) => {
+    if (typeof res.status !== 'function') {
+        console.error('res no es un objeto de respuesta de Express');
+        return next(new Error('Invalid response object'));
     }
-}
+
+    const userRole = req.user && req.user.role;
+    if (!userRole || userRole !== 'admin') {
+        console.error('Error en adminAuth:', req.user);
+        return res.status(403).json({ status: 'error', message: 'No tiene permisos para realizar esta acción' });
+    }
+
+    console.log('Rol del usuario autorizado:', userRole);
+    next();
+};
 
 // Middleware de autorización solo para usuario Premium
 export function premiumAuth(req, res, next) {
@@ -48,6 +57,7 @@ export function userAuth(req, res, next) {
     }
 }
 
+
 export const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -57,9 +67,49 @@ export const authenticateToken = (req, res, next) => {
     jwt.verify(token, objectConfig.jwt_private_key, (err, user) => {
         if (err) return res.status(403).json({ status: 'error', message: 'Token inválido' });
 
+        // Almacena el usuario en `req.user`
         req.user = user;
+
+        // Para depuración (opcional)
+        console.log('Datos del authHeader:', authHeader);
+        console.log('Datos del token:', token);
+        console.log('Datos de req.user:', req.user);
+        
         next();
     });
+};
+
+// Middleware para evitar que los usuarios admin agreguen productos a los carritos
+export const preventAdminAddToCart = async (req, res, next) => {
+    const userRole = req.session.user?.role;
+    const userId = req.session.user?._id;
+
+
+    
+    if (userRole === 'admin') {
+        const errorMessage = 'Los usuarios admin no pueden agregar productos al carrito.';
+        logger.error('Log de /src/middlewares/preventAdminAddToCart.js', errorMessage);
+        return res.status(403).json({ status: 'error', message: errorMessage });
+    }
+
+    try {
+        const product = await productService.getOne(req.params.pid);
+        logger.info('Información del producto', {
+            product,
+            productOwner: product.owner.toString()
+        });
+
+        if (userRole === 'premium' && product.owner.toString() === userId.toString()) {
+            const errorMessage = 'No puedes agregar tu propio producto a tu carrito.';
+            logger.error('Log de /src/middlewares/preventAdminAddToCart.js', errorMessage);
+            return res.status(403).json({ status: 'error', message: errorMessage });
+        }
+
+        next();
+    } catch (error) {
+        logger.error('Error al verificar el producto en preventAdminAddToCart', error);
+        res.status(500).json({ status: 'error', message: 'Error al verificar el producto', error: error.message });
+    }
 };
 
 export const isAuthenticated = (req, res, next) => {

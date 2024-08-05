@@ -1,6 +1,6 @@
 import express from 'express';
 import cartController from "../../controllers/cart.controller.js";
-import { adminAuth, adminOrUserAuth, userAuth, authenticateToken } from "../../middlewares/Auth.middleware.js"
+import { adminAuth, adminOrUserAuth, userAuth, authenticateToken, authenticateUser, authorizeRoles, preventAdminAddToCart } from "../../middlewares/Auth.middleware.js"
 
 const cartsRouterMSG = express.Router();
 const {
@@ -23,7 +23,7 @@ cartsRouterMSG.get('/:cid', adminOrUserAuth, getById);
 cartsRouterMSG.post('/', createCart);
 
 // Ruta para agregar productos al carrito
-cartsRouterMSG.post('/:cid/product/:pid', addProductToCart);
+cartsRouterMSG.post('/:cid/product/:pid', authenticateToken, preventAdminAddToCart, addProductToCart);
 
 // Ruta para actualizar la cantidad de un producto en el carrito
 cartsRouterMSG.put('/:cid/products/:pid', updateProductQuantity);

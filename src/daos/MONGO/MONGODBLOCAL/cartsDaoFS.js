@@ -113,7 +113,7 @@ class CartDaoFS {
             // Buscar el producto por su ID
             const productToAdd = products.find(product => product.id === parseInt(pid));
             if (!productToAdd) {
-                logger.warn(`Producto con ID ${pid} no encontrado - Log de /src/daos/MONGO/MONGODBLOCAL/cartsDaoFS.js.`);
+                logger.warning(`Producto con ID ${pid} no encontrado - Log de /src/daos/MONGO/MONGODBLOCAL/cartsDaoFS.js.`);
                 throw new Error(`Producto con ID ${pid} no encontrado.`);
             }
 

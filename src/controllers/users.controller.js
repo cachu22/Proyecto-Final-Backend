@@ -120,6 +120,28 @@ class UserController {
             res.status(500).send({ status: 'error', message: 'Error al eliminar usuario' });
         }
     }
+
+    changeUserRole = async (req, res) => {
+        try {
+            const { uid } = req.params;
+            const user = await this.userService.getUser(uid);
+            
+            if (!user) {
+                const errorMessage = 'Usuario no encontrado';
+                logger.error(`Error al actualizar el rol de usuario: ${errorMessage} - Log de /src/controllers/user.controller.js`);
+                return res.status(404).json({ status: 'error', message: errorMessage });
+            }
+        
+            // Cambia el rol del usuario
+            user.role = user.role === 'user' ? 'premium' : 'user';
+            await user.save();
+        
+            res.status(200).json({ status: 'success', message: 'Rol de usuario actualizado.', user });
+        } catch (error) {
+            logger.error(`Error al actualizar el rol de usuario: ${error.message} - Log de /src/controllers/user.controller.js`);
+            res.status(500).json({ status: 'error', message: 'Error al actualizar el rol de usuario.', error: error.message });
+        }
+    };
 }
 
 export default UserController;

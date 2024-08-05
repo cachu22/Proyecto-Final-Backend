@@ -19,7 +19,7 @@ export const handleErrors = () => (error, req, res, next) => {
             errorMessage = 'Error en la base de datos';
             break;
         default:
-            errorMessage = 'Error sin motivo alguno xD';
+            errorMessage = 'No cuentas con permisos';
             break;
     }
 

@@ -5,14 +5,14 @@ $(document).ready(function() {
     // Función para agregar un producto al carrito
     function addToCart(productId) {
         console.log("Añadiendo producto al carrito - Log de /src/Public/js/producto.js:", productId);
-
+    
         // Verifica si productId es válido
         if (!productId) {
             console.error('ID del producto inválido - Log de /src/Public/js/producto.js.');
             Swal.fire('Error', 'ID del producto inválido.', 'error');
             return;
         }
-
+    
         // Obtener el ID del carrito del almacenamiento local
         const cartId = localStorage.getItem('cartId');
         console.log("ID del carrito - Log de /src/Public/js/producto.js:", cartId);
@@ -22,17 +22,24 @@ $(document).ready(function() {
             Swal.fire('Error', 'Debes loguearte para añadir productos', 'error');
             return;
         }
-
+    
+        // Obtener el token del almacenamiento local
+        const token = localStorage.getItem('token');
+        console.log("Token - Log de /src/Public/js/producto.js:", token);
+    
         const data = {
             quantity: 1
         };
         console.log("Datos enviados - Log de /src/Public/js/producto.js:", data);
         
         $.ajax({
-            url: `http://localhost:8000/api/cartsDB/${cartId}/product/${productId}`,
+            url: `${apiUrl}/api/cartsDB/${cartId}/product/${productId}`,
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(data),
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
             success: function(response) {
                 console.log("Respuesta del servidor - Log de /src/Public/js/producto.js:", response);
                 
@@ -45,7 +52,7 @@ $(document).ready(function() {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error('Error al agregar al carrito - Log de /src/Public/js/producto.js:', textStatus, errorThrown);
-                Swal.fire('Error', 'No se pudo agregar el producto al carrito', 'error');
+                Swal.fire('Error', 'No se pudo agregar el producto al carrito - Verifica tu sesión', 'error');
             }
         });
     }
