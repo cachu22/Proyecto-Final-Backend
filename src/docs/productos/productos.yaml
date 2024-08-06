@@ -1,0 +1,217 @@
+openapi: 3.0.1
+info:
+  title: API para Productos
+  description: API para manejar productos en la ecommerce
+  version: 1.0.0
+paths:
+  /api/mgProducts/:
+    get:
+      summary: Obtiene todos los productos
+      tags: 
+        - Productos
+      responses:
+        "200":
+          description: Productos obtenidos correctamente de la base de datos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductArray'
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
+
+    post: 
+      summary: Crea un producto
+      tags: 
+        - Producto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        "200":
+          description: Producto creado correctamente en la base de datos
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
+
+  /api/mgProducts/products/:
+    get: 
+      summary: Obtiene todos los productos paginados
+      tags: 
+        - Productos
+      responses:
+        "200":
+          description: Productos obtenidos correctamente de la base de datos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductArray'
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
+
+  /api/mgProducts/products/category/{category}/:
+    get: 
+      summary: Obtiene los productos por categoría
+      tags: 
+        - Productos
+      parameters:
+        - in: path
+          name: category
+          schema:
+            type: string
+          required: true
+          description: La categoría de los productos
+      responses:
+        "200":
+          description: Productos obtenidos correctamente de la base de datos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductArray'
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
+
+  /api/mgProducts/products/status/{availability}/:
+    get: 
+      summary: Obtiene los productos por disponibilidad
+      tags: 
+        - Productos
+      parameters:
+        - in: path
+          name: availability
+          schema:
+            type: string
+          required: true
+          description: La disponibilidad de los productos
+      responses:
+        "200":
+          description: Productos obtenidos correctamente de la base de datos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductArray'
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
+
+  /api/mgProducts/products/sort/{sortByPrice}/{order}/:
+    get: 
+      summary: Obtiene los productos por precio
+      tags: 
+        - Productos
+      parameters:
+        - in: path
+          name: sortByPrice
+          schema:
+            type: string
+          required: true
+          description: El criterio de ordenación por precio
+        - in: path
+          name: order
+          schema:
+            type: string
+          required: true
+          description: El orden (ascendente o descendente)
+      responses:
+        "200":
+          description: Productos obtenidos correctamente de la base de datos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductArray'
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
+
+  /api/mgProducts/{pid}/:
+    get: 
+      summary: Obtiene un producto específico
+      tags: 
+        - Producto
+      parameters:
+        - in: path
+          name: pid
+          schema:
+            type: string
+          required: true
+          description: El ID del producto
+      responses:
+        "200":
+          description: Producto obtenido correctamente de la base de datos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
+
+    put: 
+      summary: Modifica un producto
+      tags: 
+        - Producto
+      parameters:
+        - in: path
+          name: pid
+          schema:
+            type: string
+          required: true
+          description: El ID del producto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        "200":
+          description: Producto modificado correctamente en la base de datos
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
+
+    delete: 
+      summary: Elimina un producto
+      tags: 
+        - Producto
+      parameters:
+        - in: path
+          name: pid
+          schema:
+            type: string
+          required: true
+          description: El ID del producto
+      responses:
+        "200":
+          description: Producto eliminado correctamente de la base de datos
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID autogenerado de Mongo
+        name:
+          type: string
+          description: Nombre del producto
+        category:
+          type: string
+          description: Categoría del producto
+        availability:
+          type: string
+          description: Disponibilidad del producto
+        price:
+          type: number
+          description: Precio del producto
+      example:
+        _id: "60c72b2f9b1e8b3f8b2f8b3f"
+        name: "Producto de ejemplo"
+        category: "Categoría de ejemplo"
+        availability: "Disponible"
+        price: 100.0
+
+    ProductArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/Product'

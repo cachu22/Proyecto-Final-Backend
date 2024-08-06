@@ -24,7 +24,11 @@ import ProductDaoFS from './daos/MONGO/MONGODBLOCAL/productDao.FS.js';
 import { productsSocket } from './utils/productsSocket.js';
 import { handleErrors } from './middlewares/errors/index.js';
 import { addLogger, logger } from './utils/logger.js';
+
+import swaggerJsDoc from 'swagger-jsdoc'
 import swaggerUiExpress from 'swagger-ui-express';
+
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -46,15 +50,19 @@ connectDb().then(() => {
     process.exit(1);
 });
 
-                            // const swaggerOptions = {
-                            //     definition: {
-                            //         openapi: {
-                            //         info: {
-                            //             title: 'Documentación de app para la adopción de mascotas',
-                            //             description: 'API para documentar app de mascota'
-                            //         }
-                            //     },
-                            //     apis: [`${__dirname}/docs/**/*.taml`]
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: 'Documentación de app para la ecommerce',
+            description: 'API para documentar app de comercio'
+        }
+    },
+    apis: [`${__dirname}/docs/**/*.yaml`]
+}
+
+const specs = swaggerJsDoc(swaggerOptions)
+app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

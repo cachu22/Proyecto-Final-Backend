@@ -1,0 +1,132 @@
+openapi: 3.0.1
+info:
+  title: API para Carritos
+  description: API para manejar carritos en la ecommerce
+  version: 1.0.0
+paths:
+  /api/cartsDB/:
+    get:
+      summary: Obtiene todos los carritos
+      tags: 
+        - Carritos
+      responses:
+        "200":
+          description: Carritos obtenidos correctamente de la base de datos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartArray'
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
+
+    post:
+      summary: Crea un carrito
+      tags: 
+        - Carrito
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cart'
+      responses:
+        "200":
+          description: Carrito creado correctamente en la base de datos
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
+
+  /api/cartsDB/{cartId}/:
+    get:
+      summary: Obtiene un carrito específico
+      tags: 
+        - Carrito
+      parameters:
+        - in: path
+          name: cartId
+          schema:
+            type: string
+          required: true
+          description: El ID del carrito
+      responses:
+        "200":
+          description: Carrito obtenido correctamente de la base de datos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
+
+    put:
+      summary: Modifica un carrito
+      tags: 
+        - Carrito
+      parameters:
+        - in: path
+          name: cartId
+          schema:
+            type: string
+          required: true
+          description: El ID del carrito
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cart'
+      responses:
+        "200":
+          description: Carrito modificado correctamente en la base de datos
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
+
+    delete:
+      summary: Elimina un carrito
+      tags: 
+        - Carrito
+      parameters:
+        - in: path
+          name: cartId
+          schema:
+            type: string
+          required: true
+          description: El ID del carrito
+      responses:
+        "200":
+          description: Carrito eliminado correctamente de la base de datos
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID autogenerado de Mongo
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                $ref: '#/components/schemas/Product'
+              quantity:
+                type: integer
+                description: Cantidad del producto en el carrito
+      example:
+        _id: "60c72b2f9b1e8b3f8b2f8b3f"
+        products: 
+          - product: 
+              _id: "60c72b2f9b1e8b3f8b2f8b3f"
+              name: "Producto de ejemplo"
+              category: "Categoría de ejemplo"
+              availability: "Disponible"
+              price: 100.0
+            quantity: 5
+
+    CartArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/Cart'
