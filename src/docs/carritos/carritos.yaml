@@ -9,6 +9,8 @@ paths:
       summary: Obtiene todos los carritos
       tags: 
         - Carritos
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Carritos obtenidos correctamente de la base de datos
@@ -22,7 +24,9 @@ paths:
     post:
       summary: Crea un carrito
       tags: 
-        - Carrito
+        - Carritos
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -39,7 +43,9 @@ paths:
     get:
       summary: Obtiene un carrito específico
       tags: 
-        - Carrito
+        - Carritos
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: cartId
@@ -57,10 +63,13 @@ paths:
         "500":
           description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
 
-    put:
-      summary: Modifica un carrito
+  /api/cartsDB/{cartId}/product/{productId}:
+    post:
+      summary: Agrega un producto al carrito
       tags: 
-        - Carrito
+        - Carritos
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: cartId
@@ -68,22 +77,70 @@ paths:
             type: string
           required: true
           description: El ID del carrito
+        - in: path
+          name: productId
+          schema:
+            type: string
+          required: true
+          description: El ID del producto a agregar
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Cart'
+              type: object
+              properties:
+                quantity:
+                  type: integer
+                  description: La cantidad del producto a agregar
+              required:
+                - quantity
       responses:
         "200":
           description: Carrito modificado correctamente en la base de datos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  cart:
+                    $ref: '#/components/schemas/Cart'
+        "400":
+          description: Parámetros inválidos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Parámetros inválidos
         "500":
           description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Error interno del servidor
 
-    delete:
-      summary: Elimina un carrito
+    put:
+      summary: Modifica la cantidad de un producto en el carrito
       tags: 
-        - Carrito
+        - Carritos
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: cartId
@@ -91,11 +148,123 @@ paths:
             type: string
           required: true
           description: El ID del carrito
+        - in: path
+          name: productId
+          schema:
+            type: string
+          required: true
+          description: El ID del producto a actualizar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+                  description: La nueva cantidad del producto
+              required:
+                - quantity
       responses:
         "200":
-          description: Carrito eliminado correctamente de la base de datos
+          description: Cantidad del producto actualizada correctamente en el carrito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  payload:
+                    $ref: '#/components/schemas/Cart'
+        "400":
+          description: Parámetros inválidos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Se requiere una cantidad válida
         "500":
           description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Error al actualizar la cantidad del producto en el carrito
+
+    delete:
+      summary: Elimina un producto del carrito
+      tags: 
+        - Carritos
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: cartId
+          schema:
+            type: string
+          required: true
+          description: El ID del carrito
+        - in: path
+          name: productId
+          schema:
+            type: string
+          required: true
+          description: El ID del producto a eliminar
+      responses:
+        "200":
+          description: Producto eliminado correctamente del carrito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Producto eliminado del carrito correctamente
+        "400":
+          description: Parámetros inválidos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: ID del carrito o producto no válido
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Error al eliminar el producto del carrito
 
 components:
   schemas:

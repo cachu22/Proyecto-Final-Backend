@@ -56,10 +56,24 @@ const swaggerOptions = {
         info: {
             title: 'Documentación de app para la ecommerce',
             description: 'API para documentar app de comercio'
-        }
+        },
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                },
+            },
+        },
+        security: [
+            {
+                bearerAuth: [],
+            },
+        ],
     },
-    apis: [`${__dirname}/docs/**/*.yaml`]
-}
+    apis: [`${__dirname}/docs/**/*.yaml`],
+};
 
 const specs = swaggerJsDoc(swaggerOptions)
 app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))

@@ -197,7 +197,7 @@ class ProductController {
         const { pid } = req.params;
         const updatedProductData = req.body;
         try {
-            const result = await this.productService.updateProduct(pid, updatedProductData);
+            const result = await this.productService.update(pid, updatedProductData);
             res.send({ status: 'success', payload: result });
         } catch (error) {
             console.error('Error al actualizar el producto - Log de /src/controllers/product.controller.js:', error);

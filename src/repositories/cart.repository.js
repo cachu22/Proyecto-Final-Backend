@@ -15,42 +15,42 @@ export default class CartRepository {
 
     // Obtener un carrito por ID
     getById = async (id) => {
-        const cart = await this.cartDao.getBy({ _id: id });
+        const cart = await this.cartDao.getById(id); // Pasar id directamente
         logger.info('Carrito obtenido en getById - src/repositories/cart.repository.js', cart); // Log info
         return cart ? new CartDto(cart) : null; // Transforma el carrito en DTO
     };
 
     // Crear un nuevo carrito
-    createCart = async (cart) => {
+    create = async (cart) => {
         const newCart = await this.cartDao.create(cart);
         logger.info('Carrito creado en createCart - src/repositories/cart.repository.js', newCart); // Log info
         return new CartDto(newCart); // Transforma el carrito creado en un DTO y devolverlo
     };
 
     // Agregar producto al carrito
-    addProductToCart = async (cartId, productId, quantity) => {
-        const updatedCart = await this.cartDao.addProductToCart(cartId, productId, quantity);
+    add = async (cartId, productId, quantity) => {
+        const updatedCart = await this.cartDao.add(cartId, productId, quantity);
         logger.info('Producto agregado al carrito en addProductToCart - src/repositories/cart.repository.js', updatedCart); // Log info
         return new CartDto(updatedCart); // Devuelve el carrito actualizado como DTO
     };
 
     // Actualizar la cantidad del producto en el carrito
-    updateProductQuantity = async (cartId, productId, quantity) => {
-        const updatedCart = await this.cartDao.updateProductQuantity(cartId, productId, quantity);
+    update = async (cartId, productId, quantity) => {
+        const updatedCart = await this.cartDao.update(cartId, productId, quantity);
         logger.info('Cantidad del producto actualizada en updateProductQuantity - src/repositories/cart.repository.js', updatedCart); // Log info
         return new CartDto(updatedCart); // Devuelve el carrito actualizado como DTO
     };
 
     // Eliminar producto del carrito
-    removeProductFromCart = async (cartId, productId) => {
-        const updatedCart = await this.cartDao.removeProduct(cartId, productId);
+    remove = async (cartId, productId) => {
+        const updatedCart = await this.cartDao.remove(cartId, productId);
         logger.info('Producto eliminado del carrito en removeProductFromCart - src/repositories/cart.repository.js', updatedCart); // Log info
         return new CartDto(updatedCart); // Devuelve el carrito actualizado como DTO
     };
 
     // Vaciar el carrito
-    emptyCart = async (cartId) => {
-        const updatedCart = await this.cartDao.emptyCart(cartId);
+    deleteDate = async (cartId) => {
+        const updatedCart = await this.cartDao.deleteDate(cartId);
         logger.info('Carrito vaciado en emptyCart - src/repositories/cart.repository.js', updatedCart); // Log info
         return new CartDto(updatedCart); // Devuelve el carrito vacío como DTO
     };

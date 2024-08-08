@@ -78,47 +78,6 @@ viewsRouter.get('/current', (req, res) => {
     logger.info('Página de información del usuario actual renderizada - src/Routes/views.router.js');
 });
 
-// viewsRouter.post('/login', async (req, res) => {
-//     try {
-//         // Obtener el usuario por email
-//         const user = await userService.getUserInfo(req.body.email);
-        
-//         // Verificar si el usuario existe
-//         if (!user) {
-//             return res.status(404).json({ status: 'error', message: 'Usuario no encontrado' });
-//         }
-
-//         console.log('el usuario', user);
-
-//         // Establecer la sesión del usuario
-//         req.session.user = {
-//             first_name: user.first_name,
-//             last_name: user.last_name,
-//             admin: user.role === 'admin'
-//         };
-
-//         // Redirigir a /gestionProductos
-//         res.redirect('/gestionProductos');
-
-//         // Registrar la información del usuario y la redirección
-//         logger.info('Usuario autenticado y redirigido a /gestionProductos - src/Routes/views.router.js', { user: req.session.user });
-//     } catch (error) {
-//         // Manejar errores
-//         console.error('Error en la ruta /login:', error);
-//         res.status(500).json({ status: 'error', message: 'Error interno del servidor' });
-//     }
-// });
-
-// Ruta usando adminOrUserAuth
-// viewsRouter.get('/adminlogin', authenticateToken, authenticateUser, authorizeRoles, adminOrUserAuth, (req, res) => {
-//     res.render('template-name', {
-//         first_name: req.session.user.first_name,
-//         last_name: req.session.user.last_name,
-//         isAdmin: req.session.user.isAdmin
-//     });
-//     logger.info('Página de administración renderizada para el usuario - src/Routes/views.router.js', { user: req.session.user });
-// });
-
 viewsRouter.get('/check-session', (req, res) => {
     res.json(req.session.user);
     logger.info('Verificación de sesión realizada - src/Routes/views.router.js', { sessionUser: req.session.user });

@@ -9,6 +9,8 @@ paths:
       summary: Obtiene todos los productos
       tags: 
         - Productos
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Productos obtenidos correctamente de la base de datos
@@ -22,7 +24,9 @@ paths:
     post: 
       summary: Crea un producto
       tags: 
-        - Producto
+        - Productos
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -40,6 +44,8 @@ paths:
       summary: Obtiene todos los productos paginados
       tags: 
         - Productos
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Productos obtenidos correctamente de la base de datos
@@ -55,6 +61,8 @@ paths:
       summary: Obtiene los productos por categoría
       tags: 
         - Productos
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: category
@@ -77,6 +85,8 @@ paths:
       summary: Obtiene los productos por disponibilidad
       tags: 
         - Productos
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: availability
@@ -94,39 +104,75 @@ paths:
         "500":
           description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
 
-  /api/mgProducts/products/sort/{sortByPrice}/{order}/:
-    get: 
-      summary: Obtiene los productos por precio
-      tags: 
+  /api/mgProducts/products/sort/{sortByPrice}/{order}:
+    get:
+      summary: Obtener productos ordenados por precio
+      tags:
         - Productos
       parameters:
         - in: path
           name: sortByPrice
+          required: true
           schema:
             type: string
-          required: true
-          description: El criterio de ordenación por precio
+            enum: [price]
+          description: El campo por el cual ordenar los productos (actualmente solo 'price' está soportado)
         - in: path
           name: order
+          required: true
           schema:
             type: string
-          required: true
-          description: El orden (ascendente o descendente)
+            enum: [asc, desc]
+          description: El orden en el cual ordenar los productos ('asc' para ascendente, 'desc' para descendente)
       responses:
         "200":
-          description: Productos obtenidos correctamente de la base de datos
+          description: Productos ordenados correctamente
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProductArray'
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  payload:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+        "400":
+          description: Parámetros de ordenamiento no válidos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Parámetros de ordenamiento no válidos
         "500":
-          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
+          description: Error al obtener productos ordenados por precio
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Error al obtener productos ordenados por precio
 
   /api/mgProducts/{pid}/:
     get: 
-      summary: Obtiene un producto específico
+      summary: Obtiene un producto por su ID
       tags: 
         - Producto
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: pid
@@ -144,10 +190,12 @@ paths:
         "500":
           description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
 
-    put: 
+    put:
       summary: Modifica un producto
       tags: 
         - Producto
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: pid
@@ -167,10 +215,12 @@ paths:
         "500":
           description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
 
-    delete: 
+    delete:
       summary: Elimina un producto
       tags: 
         - Producto
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: pid
@@ -185,6 +235,11 @@ paths:
           description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de la app
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     Product:
       type: object
@@ -210,8 +265,33 @@ components:
         category: "Categoría de ejemplo"
         availability: "Disponible"
         price: 100.0
-
     ProductArray:
       type: array
       items:
         $ref: '#/components/schemas/Product'
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID autogenerado de Mongo
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                $ref: '#/components/schemas/Product'
+              quantity:
+                type: integer
+                description: Cantidad del producto en el carrito
+      example:
+        _id: "60c72b2f9b1e8b3f8b2f8b3f"
+        products: 
+          - product: 
+              _id: "60c72b2f9b1e8b3f8b2f8b3f"
+              name: "Producto de ejemplo"
+              category: "Categoría de ejemplo"
+              availability: "Disponible"
+              price: 100.0
+            quantity: 5

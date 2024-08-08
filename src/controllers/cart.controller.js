@@ -10,45 +10,42 @@ class CartController {
     constructor() {
         this.cartService = cartService;
         this.productService = ProductService;
-
-        this.addProductToCart = this.addProductToCart.bind(this);
     }
 
 
-    // Método para obtener todos los carritos
+   // Método para obtener todos los carritos
     getAll = async (req, res) => {
         try {
-            const carts = await this.cartService.getAll();
-            logger.info('Carritos obtenidos - Log de /src/controllers/cart.controller.js1:', carts);
+            const carts = await cartService.getAll();
+            logger.info('Carritos obtenidos:', carts);
             res.send({ status: 'success', payload: carts });
         } catch (error) {
-            logger.error('Error al obtener todos los carritos - Log de /src/controllers/cart.controller.js2:', error);
+            logger.error('Error al obtener todos los carritos:', error);
             res.status(500).send({ status: 'error', message: 'Error al obtener todos los carritos' });
-        }
-    };
+        }}
 
     // Método para obtener un carrito por ID
     getById = async (req, res) => {
         const { cid } = req.params;
         try {
+            logger.info(`Recibiendo solicitud para obtener carrito con ID ${cid}`);
             const result = await this.cartService.getById(cid);
             if (!result) {
                 logger.warning(`No se encontró el carrito con el ID ${cid} - Log de /src/controllers/cart.controller.js3`);
-                res.status(404).send({ status: 'error', message: 'No se encontró el carrito con el ID especificado' });
-            } else {
-                logger.info(`Carrito con ID ${cid} encontrado - Log de /src/controllers/cart.controller.js4:`, result);
-                res.send({ status: 'success', payload: result });
+                return res.status(404).send({ status: 'error', message: 'No se encontró el carrito con el ID especificado' });
             }
+            logger.info(`Carrito con ID ${cid} encontrado - Log de /src/controllers/cart.controller.js4:`, result);
+            return res.send({ status: 'success', payload: result });
         } catch (error) {
             logger.error('Error al buscar el carrito por ID - Log de /src/controllers/cart.controller.js5:', error);
-            res.status(500).send({ status: 'error', message: 'Error al buscar el carrito por ID' });
+            return res.status(500).send({ status: 'error', message: 'Error al buscar el carrito por ID' });
         }
     };
 
     // Método para crear un carrito
-    createCart = async (req, res) => {
+    create = async (req, res) => {
         try {
-            const newCart = await this.cartService.createCart();
+            const newCart = await this.cartService.create();
             logger.info('Nuevo carrito creado - Log de /src/controllers/cart.controller.js6:', newCart);
             res.status(201).json({ status: 'success', payload: newCart });
         } catch (error) {
@@ -58,7 +55,7 @@ class CartController {
     };
 
     // Método para agregar un producto al carrito
-    addProductToCart = async (req, res) => {
+    add = async (req, res) => {
         try {
             const { cid, pid } = req.params;
             const { quantity } = req.body;
@@ -139,7 +136,7 @@ class CartController {
             }
     
             // Agregar el producto al carrito
-            const result = await this.cartService.addProductToCart(cid, pid, quantity);
+            const result = await this.cartService.add(cid, pid, quantity);
             logger.info('Producto agregado al carrito - Log de /src/controllers/cart.controller.js15:', { cid, pid, quantity, result });
             res.send({ status: 'success', payload: result });
         } catch (error) {
@@ -149,7 +146,7 @@ class CartController {
     };
 
     // Método para actualizar la cantidad de un producto en el carrito
-    updateProductQuantity = async (req, res) => {
+    update = async (req, res) => {
         try {
             const { cid, pid } = req.params;
             const { quantity } = req.body;
@@ -159,7 +156,7 @@ class CartController {
                 return res.status(400).json({ status: 'error', message: 'Se requiere una cantidad válida' });
             }
 
-            const updatedCart = await this.cartService.updateProductQuantity(cid, pid, quantity);
+            const updatedCart = await this.cartService.update(cid, pid, quantity);
             logger.info('Cantidad de producto actualizada en el carrito - Log de /src/controllers/cart.controller.js16:', { cid, pid, quantity, updatedCart });
             res.send({ status: 'success', payload: updatedCart });
         } catch (error) {
@@ -169,11 +166,11 @@ class CartController {
     };
 
     // Método para eliminar un producto del carrito
-    removeProductFromCart = async (req, res) => {
+    remove = async (req, res) => {
         try {
             const { cid, pid } = req.params;
 
-            const result = await this.cartService.removeProductFromCart(cid, pid);
+            const result = await this.cartService.remove(cid, pid);
             logger.info('Producto eliminado del carrito - Log de /src/controllers/cart.controller.js18:', { cid, pid, result });
             res.send({ status: 'success', message: 'Producto eliminado del carrito' });
         } catch (error) {
@@ -187,7 +184,7 @@ class CartController {
         try {
             const { cid } = req.params;
 
-            const updatedCart = await this.cartService.emptyCart(cid);
+            const updatedCart = await this.cartService.deleteDate(cid);
             logger.info('Carrito vaciado - Log de /src/controllers/cart.controller.js20:', { cid, updatedCart });
             res.send({ status: 'success', payload: updatedCart });
         } catch (error) {
