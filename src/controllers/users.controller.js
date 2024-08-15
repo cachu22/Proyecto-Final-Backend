@@ -41,7 +41,7 @@ class UserController {
 
     getOneInfo = async (req, res) => {
         try {
-            const userId = req.params.uid;
+            const userId = req.user.id;
             if (!userId) {
                 return res.status(400).json({ status: 'error', message: 'ID Erroneo' });
             }
@@ -57,8 +57,9 @@ class UserController {
     };
 
     create = async (req, res, next) => {
+        console.log('Datos recibidos en la solicitud supertest:', req.body);
         try {
-            const { first_name, last_name, email, password, age, fullname } = req.body;
+            const { first_name, last_name, email, password, role, age, fullname } = req.body;
             if (!first_name || !last_name || !email) {
                 CustomError.createError({
                     name: 'UserValidationError',
@@ -73,6 +74,7 @@ class UserController {
                 last_name,
                 email,
                 fullname,
+                role,
                 password: createHash(password), // Hashear la contraseña
                 age
             };

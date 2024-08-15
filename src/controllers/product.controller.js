@@ -183,7 +183,7 @@ class ProductController {
             const result = await this.productService.create(newProduct);
     
             // Responde con un estado 201 (Created) y el producto creado en el payload
-            res.status(201).json({ status: 'success', payload: result });
+            res.status(201).json({ status: 'success', payload: newProduct });
         } catch (error) {
             // Registra un mensaje de error en la consola si ocurre una excepción
             console.error('Error al crear el producto:', error);

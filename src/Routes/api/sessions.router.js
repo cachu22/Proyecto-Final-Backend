@@ -33,7 +33,7 @@ sessionsRouter.get('/github', passport.authenticate('github', { scope: 'user:ema
 sessionsRouter.post('/register', async (req, res, next) => {
     logger.info('Se recibió una solicitud de registro - src/Routes/api/sessions.router.js', req.body);
 
-    const { first_name, last_name, password, email, age } = req.body;
+    const { first_name, last_name, password, email, role, age } = req.body;
 
     // Validación de campos obligatorios
     if (!password || !email) {
@@ -66,6 +66,7 @@ sessionsRouter.post('/register', async (req, res, next) => {
             last_name,
             email,
             age,
+            role,
             password: createHash(password)
         };
 

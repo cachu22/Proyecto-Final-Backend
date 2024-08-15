@@ -113,20 +113,26 @@ export const preventAdminAddToCart = async (req, res, next) => {
 };
 
 export const isAuthenticated = (req, res, next) => {
-    const token = req.cookies['token'];
+    const authHeader = req.headers['authorization'];
+    if (!authHeader) {
+        logger.warning('No token provided');
+        return res.status(401).json({ status: 'error', message: 'Unauthorized' });
+    }
+
+    const token = authHeader.split(' ')[1]; // Obtener el token después de 'Bearer '
     if (!token) {
-        logger.warning('No token provided - Log de /src/middlewares/Auth.middleware.js');
+        logger.warning('No token found in header');
         return res.status(401).json({ status: 'error', message: 'Unauthorized' });
     }
 
     try {
-        logger.info('Token recibido - Log de /src/middlewares/Auth.middleware.js:', token);
-        const decoded = jwt.verify(token, PRIVATE_KEY);
-        logger.info('Token decodificado - Log de /src/middlewares/Auth.middleware.js:', decoded);
+        logger.info('Token recibido:', token);
+        const decoded = jwt.verify(token, objectConfig.jwt_private_key);
+        logger.info('Token decodificado:', decoded);
         req.user = decoded;
         next();
     } catch (error) {
-        logger.error('Verificación de JWT fallida - Log de /src/middlewares/Auth.middleware.js:', error);
+        logger.error('Verificación de JWT fallida:', error);
         return res.status(401).json({ status: 'error', message: 'Unauthorized' });
     }
 };

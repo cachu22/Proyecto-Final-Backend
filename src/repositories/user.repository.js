@@ -21,8 +21,8 @@ export default class UserRepository {
         try {
             logger.info(`Fetching user info with filter: ${JSON.stringify(filter)}`);
             const user = await this.userDao.getOneInfo(filter);
-            // return user ? new UserDto(user) : null;  -  Se comenta porque solo necesito el mail
-            return user ? { email: user.email } : null;
+            return user ? new UserDto(user) : null; // -  Se comenta porque solo necesito el mail
+            // return user ? { email: user.email } : null;
         } catch (error) {
             logger.error('Error fetching user info:', error);
             throw error;
@@ -46,7 +46,7 @@ export default class UserRepository {
     }
 
     deleteUser = async (uid) => {
-        const deletedUser = await this.userDao.delete(uid);
+        const deletedUser = await this.userDao.deleteData(uid);
         logger.info('Usuario eliminado - user.repository - src/repositories/user.repository.js', deletedUser); // Log info
         return deletedUser ? new UserDto(deletedUser) : null;
     }

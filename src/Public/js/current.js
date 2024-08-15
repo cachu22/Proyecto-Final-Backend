@@ -1,13 +1,11 @@
-import { logger } from "../../utils/logger.js";
-
 const apiUrl = 'http://localhost:8000';
 
 function getUserInfo() {
     const token = localStorage.getItem('token');
-    logger.info('log de current.js - getUserInfo - token - Log de src/Public/js/current.js', token);
+    console.log('log de current.js - getUserInfo - token - Log de src/Public/js/current.js', token);
 
     if (!token) {
-        logger.warn('No token found - Log de src/Public/js/current.js');
+        console.log('No token found - Log de src/Public/js/current.js');
         return;
     }
 
@@ -16,14 +14,14 @@ function getUserInfo() {
     const userId = payload.id;
 
     $.ajax({
-        url: `${apiUrl}/api/usersDB/user-info/${userId}`,
+        url: `${apiUrl}/api/sessions/current`,
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${token}` // Enviar el token en el encabezado
+            'Authorization': `Bearer ${token}`
         },
         success: function(userData) {
             if (userData && userData.status === 'success' && userData.payload) {
-                logger.info('Datos del usuario obtenidos - Log de src/Public/js/current.js:', userData.payload);
+                console.log('Datos del usuario obtenidos - Log de src/Public/js/current.js:', userData.payload);
                 const isLoggedIn = true;
 
                 // Actualizar el contenido del HTML con los datos del usuario
@@ -32,13 +30,13 @@ function getUserInfo() {
                 // Agrega más campos según sea necesario
 
             } else {
-                logger.warn('Usuario no está logueado o datos no válidos - Log de src/Public/js/current.js:', userData);
+                console.log('Usuario no está logueado o datos no válidos - Log de src/Public/js/current.js:', userData);
                 const isLoggedIn = false;
             }
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            logger.error('Error al obtener datos del usuario - Log de src/Public/js/current.js:', textStatus, errorThrown);
-            logger.info('Respuesta completa del error - Log de src/Public/js/current.js:', jqXHR.responseText);
+            console.log('Error al obtener datos del usuario - Log de src/Public/js/current.js:', textStatus, errorThrown);
+            console.log('Respuesta completa del error - Log de src/Public/js/current.js:', jqXHR.responseText);
         }
     });
 }

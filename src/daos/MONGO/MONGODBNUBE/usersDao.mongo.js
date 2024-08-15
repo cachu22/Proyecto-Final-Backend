@@ -22,9 +22,9 @@ class UserDaoMongo {
     return userModel.findOne({ _id: id });
   }
 
-  async getOneInfo(filter) {
+  async getOneInfo(userId) {
     try {
-        const user = await userModel.findOne(filter);
+        const user = await userModel.findOne({ _id: userId });
         if (!user) {
             logger.warning('Usuario no encontrado con el filtro:', filter);
             throw new Error('Usuario no encontrado');
@@ -50,7 +50,7 @@ class UserDaoMongo {
   async create(user) {
     try {
       // Log para verificar el objeto antes de guardarlo en la base de datos
-      logger.info('Objeto que se guarda en la base de datos - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', user);
+      logger.info('Objeto que se guarda en la base de datos - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js1:', user);
       const newUser = await userModel.create(user);
       logger.info('Usuario creado con éxito - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', newUser);
       return newUser;
