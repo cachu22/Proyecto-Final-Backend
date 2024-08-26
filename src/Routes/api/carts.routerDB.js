@@ -10,7 +10,8 @@ const {
     add,
     update,
     remove,
-    deleteDate
+    deleteDate,
+    purchase
 }= new cartController()
 
 // Ruta para traer todos los carros
@@ -33,5 +34,8 @@ cartsRouterMSG.delete('/:cid/product/:pid', remove);
 
 // Ruta para vaciar el carrito
 cartsRouterMSG.delete('/:cid/products', deleteDate);
+
+// Ruta para el proceso de compra
+cartsRouterMSG.post('/:cid/purchase', authenticateToken, purchase);
 
 export { cartsRouterMSG };

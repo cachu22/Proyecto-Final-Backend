@@ -120,50 +120,78 @@ async function authenticateUser(email, password) {
 // Ruta de inicio de sesión
 sessionsRouter.post('/login', async (req, res) => {
     const { email, password } = req.body;
-
+  
     if (!email || !password) {
-        logger.info('Error: Faltan datos en la solicitud de login - src/Routes/api/sessions.router.js');
-        return res.status(401).json({ status: 'error', error: 'Se deben completar todos los datos' });
+      logger.info('Error: Faltan datos en la solicitud de login');
+      return res.status(400).json({ status: 'error', error: 'Se deben completar todos los datos' });
     }
-
-    logger.info('Recibiendo solicitud de login - src/Routes/api/sessions.router.js', { email });
-
+  
     try {
-        const result = await authenticateUser(email, password);
-
-        if (result.success) {
-            // Generar y enviar token JWT
-            const token = generateToken({ id: result.user._id, email: result.user.email, role: result.user.role });
-
-            // Almacenar los datos del usuario en la sesión, incluyendo el rol
-            req.session.user = {
-                first_name: result.user.first_name,
-                last_name: result.user.last_name,
-                email: result.user.email,
-                role: result.user.role,
-                id: result.user._id
-            };
-
-            // Establecer una cookie con datos del usuario
-            res.cookie('user', JSON.stringify({
-                email: req.session.user.email,
-                first_name: req.session.user.first_name,
-                last_name: req.session.user.last_name,
-                role: req.session.user.role
-            }), { maxAge: 1000000, httpOnly: true });
-
-            logger.info('Usuario autenticado exitosamente - src/Routes/api/sessions.router.js', { user: req.session.user });
-
-            // Enviar la respuesta con el token JWT y redirigir a la ruta principal
-            res.json({ status: 'success', token, redirectTo: '/' });
-        } else {
-            res.status(401).json({ status: 'error', message: result.message });
-        }
+      const result = await authenticateUser(email, password);
+  
+      if (result.success) {
+        // Aquí utilizamos el servicio de usuario para actualizar la última conexión
+        const updatedUser = {
+          last_connection: new Date(),
+        };
+  
+        await userService.update(result.user._id, updatedUser);
+  
+        const token = generateToken({ id: result.user._id, email: result.user.email, role: result.user.role });
+  
+        req.session.user = {
+          first_name: result.user.first_name,
+          last_name: result.user.last_name,
+          email: result.user.email,
+          role: result.user.role,
+          id: result.user._id
+        };
+  
+        res.cookie('user', JSON.stringify({
+          email: req.session.user.email,
+          first_name: req.session.user.first_name,
+          last_name: req.session.user.last_name,
+          role: req.session.user.role
+        }), { maxAge: 1000000, httpOnly: true });
+  
+        logger.info('Usuario autenticado exitosamente', { user: req.session.user });
+  
+        res.json({ status: 'success', token, redirectTo: '/' });
+      } else {
+        res.status(401).json({ status: 'error', message: result.message });
+      }
     } catch (error) {
-        logger.error('Error en la autenticación del usuario - src/Routes/api/sessions.router.js', error);
-        res.status(500).json({ status: 'error', message: 'Error en la autenticación del usuario', error: error.message });
+      logger.error('Error en la autenticación del usuario', error);
+      res.status(500).json({ status: 'error', message: 'Error en la autenticación del usuario', error: error.message });
     }
-});
+  });
+
+// Ruta de cierre de sesión
+sessionsRouter.get('/logout', async (req, res) => {
+    try {
+      if (!req.session.user) {
+        logger.warn('No hay sesión activa para destruir - src/Routes/api/sessions.router.js');
+        return res.status(400).json({ status: 'error', message: 'No hay sesión activa' });
+      }
+  
+      // Actualizar last_connection
+      await userService.update(req.session.user.id, { last_connection: new Date() });
+  
+      req.session.destroy(err => {
+        if (err) {
+          logger.error('Error al destruir la sesión - src/Routes/api/sessions.router.js', { error: err });
+          return res.status(500).json({ status: 'error', error: 'No se pudo destruir la sesión', details: err });
+        }
+  
+        res.clearCookie('user');
+        logger.info('Sesión destruida exitosamente - src/Routes/api/sessions.router.js');
+        return res.redirect('/login');
+      });
+    } catch (error) {
+      logger.error('Error al cerrar sesión - src/Routes/api/sessions.router.js', { error: error.message });
+      res.status(500).json({ status: 'error', message: 'Error al cerrar sesión', error: error.message });
+    }
+  });
 
 sessionsRouter.post('/faillogin', (req, res) => {
     logger.info('Falló la estrategia de login - src/Routes/api/sessions.router.js');
@@ -172,18 +200,6 @@ sessionsRouter.post('/faillogin', (req, res) => {
 
 // Callback de GitHub con JWT
 sessionsRouter.get('/current', isAuthenticated, userController.getOneInfo);
-
-sessionsRouter.get('/logout', (req, res) => {
-    req.session.destroy(err => {
-        if (err) {
-            logger.error('Error al destruir la sesión - src/Routes/api/sessions.router.js', { error: err });
-            return res.send({ status: 'error', error: err });
-        } else {
-            logger.info('Sesión destruida exitosamente - src/Routes/api/sessions.router.js');
-            return res.redirect('/login');
-        }
-    });
-});
 
 // Ruta para autenticación con GitHub
 sessionsRouter.get('/github', passport.authenticate('github', { scope: ['user:email'] }));

@@ -123,6 +123,30 @@ class UserController {
         }
     }
 
+
+        //Botón de cambiar rol que funciona correctamente, comentado para la entrega
+    // changeUserRole = async (req, res) => {
+    //     try {
+    //         const { uid } = req.params;
+    //         const user = await this.userService.getUser(uid);
+            
+    //         if (!user) {
+    //             const errorMessage = 'Usuario no encontrado';
+    //             logger.error(`Error al actualizar el rol de usuario: ${errorMessage} - Log de /src/controllers/user.controller.js`);
+    //             return res.status(404).json({ status: 'error', message: errorMessage });
+    //         }
+        
+    //         // Cambia el rol del usuario
+    //         user.role = user.role === 'user' ? 'premium' : 'user';
+    //         await user.save();
+        
+    //         res.status(200).json({ status: 'success', message: 'Rol de usuario actualizado.', user });
+    //     } catch (error) {
+    //         logger.error(`Error al actualizar el rol de usuario: ${error.message} - Log de /src/controllers/user.controller.js`);
+    //         res.status(500).json({ status: 'error', message: 'Error al actualizar el rol de usuario.', error: error.message });
+    //     }
+    // };
+
     changeUserRole = async (req, res) => {
         try {
             const { uid } = req.params;
@@ -133,15 +157,57 @@ class UserController {
                 logger.error(`Error al actualizar el rol de usuario: ${errorMessage} - Log de /src/controllers/user.controller.js`);
                 return res.status(404).json({ status: 'error', message: errorMessage });
             }
-        
-            // Cambia el rol del usuario
-            user.role = user.role === 'user' ? 'premium' : 'user';
+    
+            // Verifica si el rol actual es 'user' para cambiarlo a 'premium'
+            if (user.role === 'user') {
+                const requiredDocs = ['Identificación', 'Comprobante de domicilio', 'Comprobante de estado de cuenta'];
+                const uploadedDocs = user.documents.map(doc => doc.name);
+    
+                const hasAllDocs = requiredDocs.every(doc => uploadedDocs.includes(doc));
+    
+                if (!hasAllDocs) {
+                    const errorMessage = 'No se puede actualizar a premium. Documentación incompleta.';
+                    logger.error(`Error al actualizar el rol de usuario: ${errorMessage} - Log de /src/controllers/user.controller.js`);
+                    return res.status(400).json({ status: 'error', message: errorMessage });
+                }
+    
+                // Cambia el rol del usuario a 'premium'
+                user.role = 'premium';
+            } else if (user.role === 'premium') {
+                // Cambia el rol del usuario de vuelta a 'user'
+                user.role = 'user';
+            }
+    
             await user.save();
-        
+            
             res.status(200).json({ status: 'success', message: 'Rol de usuario actualizado.', user });
         } catch (error) {
             logger.error(`Error al actualizar el rol de usuario: ${error.message} - Log de /src/controllers/user.controller.js`);
             res.status(500).json({ status: 'error', message: 'Error al actualizar el rol de usuario.', error: error.message });
+        }
+    };
+  
+    documents = async (req, res) => {
+        try {
+            const userId = req.params.uid;
+            const user = await userModel.findById(userId);
+    
+            if (!user) {
+                return res.status(404).json({ message: 'Usuario no encontrado' });
+            }
+    
+            const documents = req.files['document'] || [];
+            documents.forEach(doc => {
+                user.documents.push({
+                    name: doc.originalname,
+                    reference: doc.path
+                });
+            });
+    
+            await user.save();
+            res.status(200).json({ message: 'Documentos subidos exitosamente' });
+        } catch (error) {
+            res.status(500).json({ message: 'Error al subir documentos', error: error.message });
         }
     };
 }

@@ -1,34 +1,29 @@
 import express from 'express';
+import http from 'http';
+import { Server } from 'socket.io';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { engine } from 'express-handlebars';
-import { Server } from 'socket.io';
-import { createServer } from 'http';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
-import passport from 'passport';
-import cookieParser from 'cookie-parser';
-import dotenv from 'dotenv';
 import cors from 'cors';
 import fs from 'fs';
-
 import { initializePassport } from './config/passport.config.js';
+import dotenv from 'dotenv';
+import swaggerJsDoc from 'swagger-jsdoc';
+import swaggerUiExpress from 'swagger-ui-express';
+import { multerSingleUploader } from './utils/multer.js';
+import passport from 'passport';
+import cookieParser from 'cookie-parser';
 import { connectDb, objectConfig } from './config/index.js';
+import { handleErrors } from './middlewares/errors/index.js';
+import { addLogger, logger } from './utils/logger.js';
+import ProductDaoFS from './daos/MONGO/MONGODBLOCAL/productDao.FS.js';
 import routerApp from './Routes/index.js';
 import viewsRouter from './Routes/views.router.js';
 import clientMensajeria from './Routes/api/clientMessage.js';
-import { multerSingleUploader } from './utils/multer.js';
-import { handleAddProduct } from './utils/crear.js';
-import { deleteProduct } from './utils/eliminarProducto.js';
-import ProductDaoFS from './daos/MONGO/MONGODBLOCAL/productDao.FS.js';
-import { productsSocket } from './utils/productsSocket.js';
-import { handleErrors } from './middlewares/errors/index.js';
-import { addLogger, logger } from './utils/logger.js';
-
-import swaggerJsDoc from 'swagger-jsdoc'
-import swaggerUiExpress from 'swagger-ui-express';
-
-
+import jwt from 'jsonwebtoken';
+import { saveMessage } from './controllers/messajecontroller.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,17 +33,26 @@ logger.info("Inicializando servidor... - /server.js");
 const cartData = JSON.parse(fs.readFileSync(__dirname + '/file/carts.json', 'utf-8'));
 
 const app = express();
-const httpServer = createServer(app);
-const io = new Server(httpServer);
+const httpServer = http.createServer(app);
+const io = new Server(httpServer, {
+    cors: {
+        origin: 'http://localhost:8000',
+        methods: ['GET', 'POST'],
+        credentials: true
+    }
+});
+
 const { port } = objectConfig;
 
 logger.info("Conectando a la base de datos... - /server.js");
-connectDb().then(() => {
-    logger.info('Conectado a la base de datos archivo server - /server.js');
-}).catch(error => {
-    logger.error('Error al conectar a la base de datos archivo server - /server.js:', error);
-    process.exit(1);
-});
+connectDb()
+    .then(() => {
+        logger.info('Conectado a la base de datos archivo server - /server.js');
+    })
+    .catch(error => {
+        logger.error('Error al conectar a la base de datos archivo server - /server.js:', error);
+        process.exit(1);
+    });
 
 const swaggerOptions = {
     definition: {
@@ -75,12 +79,12 @@ const swaggerOptions = {
     apis: [`${__dirname}/docs/**/*.yaml`],
 };
 
-const specs = swaggerJsDoc(swaggerOptions)
-app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
+const specs = swaggerJsDoc(swaggerOptions);
+app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'Public')))
+app.use(express.static(path.join(__dirname, 'Public')));
 app.use(cookieParser());
 initializePassport();
 app.use(passport.initialize());
@@ -148,18 +152,44 @@ app.get('/api/config', (req, res) => {
 const manager = new ProductDaoFS(`${__dirname}/file/products.json`);
 logger.info("Gestor de productos inicializado - /server.js");
 
+// Middleware para autenticación con Socket.IO
+io.use((socket, next) => {
+    const token = socket.handshake.query.token;
+
+    if (!token) {
+        return next(new Error('Authentication error: Token no proporcionado'));
+    }
+
+    jwt.verify(token, objectConfig.jwt_private_key, (err, user) => {
+        if (err) {
+            return next(new Error('Authentication error: Token inválido'));
+        }
+
+        // Almacena el usuario en `socket.user`
+        socket.user = user;
+        next();
+    });
+});
+
+// Manejo de conexiones
 io.on('connection', (socket) => {
-    logger.info('Nuevo cliente conectado - /server.js');
+    console.log('Cliente conectado');
 
-    socket.on('message', (data) => {
-        logger.info('Mensaje recibido - /server.js:', data);
-        io.emit('message', data);
+    socket.on('message', async (data) => {
+        const { user, message } = data;
+        if (user && message) {
+            try {
+                await saveMessage(user, message);
+                io.emit('message', data); // Emitir el mensaje a todos los clientes
+            } catch (error) {
+                console.error('Error al guardar el mensaje:', error.message);
+            }
+        } else {
+            console.error('Mensaje recibido del servidor es inválido - Log de /server.js:', { user, message });
+        }
     });
 
-    socket.on('disconnect', () => {
-        logger.info('Cliente desconectado - /server.js');
-    });
-
+    // Manejo de productos
     socket.on('addProduct', (productData) => {
         handleAddProduct(productData, manager, io);
         logger.info('Datos recibidos desde el cliente - /server.js', productData);
@@ -168,6 +198,11 @@ io.on('connection', (socket) => {
     socket.on('eliminarProducto', (productId) => {
         deleteProduct(productId, manager, io);
         logger.info('Producto eliminado - /server.js:', productId);
+    });
+
+    // Manejo de desconexión
+    socket.on('disconnect', () => {
+        logger.info('Cliente desconectado', { id: socket.id });
     });
 });
 
@@ -187,3 +222,9 @@ app.use((err, req, res, next) => {
 });
 
 getServer();
+
+// Funciones de validación
+function validateMessage(message) {
+    // Implementa la lógica de validación del mensaje
+    return message && typeof message.text === 'string';
+}

@@ -1,13 +1,25 @@
-import { Schema, model } from "mongoose";
+import mongoose from 'mongoose';
 
-const messageCollection = 'messages'
+const messageCollection = 'messages';
 
-const messageSchema = new Schema(
-    {
-        user: String,
-        message: String
-      }
-)
+const messageSchema = new mongoose.Schema({
+    user: {
+        type: String,
+        required: [true, 'El campo user es obligatorio'],
+        trim: true,
+        minlength: [1, 'El campo user no puede estar vacío']
+    },
+    message: {
+        type: String,
+        required: [true, 'El campo message es obligatorio'],
+        trim: true,
+        minlength: [1, 'El campo message no puede estar vacío']
+    },
+    timestamp: {
+        type: Date,
+        default: Date.now
+    }
+});
 
-//odm
-export const messageModel = model(messageCollection, messageSchema);
+// Modelo ODM
+export const messageModel = mongoose.model(messageCollection, messageSchema);

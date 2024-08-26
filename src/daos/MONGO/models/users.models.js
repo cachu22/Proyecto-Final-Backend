@@ -2,6 +2,17 @@ import { Schema, model } from 'mongoose';
 
 const userCollection = 'users';
 
+const documentSchema = new Schema({
+    name: {
+        type: String,
+        required: true,
+    },
+    reference: {
+        type: String,
+        required: true,
+    }
+});
+
 const userSchema = new Schema({
     first_name: {
         type: String,
@@ -9,9 +20,7 @@ const userSchema = new Schema({
         index: true        
     },
     last_name: String,
-    fullname: {
-        type: String,
-    },
+    fullname: String,
     email: {
         type: String,
         required: true,
@@ -19,9 +28,18 @@ const userSchema = new Schema({
     },
     age: Number,
     password: String,
-    role: { type: String, enum: ['user', 'premium', 'admin'], default: 'user' },
+    role: { 
+        type: String, 
+        enum: ['user', 'premium', 'admin'], 
+        default: 'user' 
+    },
     resetPasswordToken: String,
-    resetPasswordExpires: Date
+    resetPasswordExpires: Date,
+    documents: {
+        type: [documentSchema],
+        default: []
+    },
+    last_connection: Date
 });
 
 // ODM 

@@ -1,5 +1,6 @@
 import ProductDto from "../dtos/products.dto.js";
 import { logger } from "../utils/logger.js";
+import { productModel } from "../daos/MONGO/models/products.models.js";
 
 export default class ProductRepository {
     constructor(productDao) {
@@ -43,4 +44,12 @@ export default class ProductRepository {
         logger.info('Producto eliminado en delete - product.repository - src/repositories/product.repository.js', result); // Log info
         return result;
     };
+
+    updateStock = async (productId, quantityChange) => {
+        return productModel.findByIdAndUpdate(
+            productId,
+            { $inc: { stock: quantityChange } }, // Incrementar o decrementar el stock
+            { new: true } // Devuelve el documento actualizado
+        );
+    }
 }

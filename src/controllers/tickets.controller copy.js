@@ -5,21 +5,19 @@ class TicketController {
 
     TicketPost = async (req, res) => {
         const { cid } = req.params;
-
+        
         try {
             // Obtener el carrito
             const cart = await cartService.getCart(cid);
             if (!cart) {
                 return res.status(404).json({
                     status: 'error',
-                    message: 'Carrito no encontrado'
+                    message: 'Cart not found'
                 });
             }
 
-            // Arrays para manejar los productos comprados y los no comprados
+            // Array de IDs de productos que no se pudieron comprar
             const productsNotPurchased = [];
-            const purchasedProducts = [];
-            let totalPrice = 0;
 
             // Comprobar la disponibilidad de cada producto en el carrito
             for (const item of cart.products) {
@@ -28,30 +26,33 @@ class TicketController {
                 const stock = await productService.getProductStock(product._id);
 
                 if (quantity > stock) {
-                    // Si no hay suficiente stock, agregar el ID del producto a la lista de no comprados
-                    productsNotPurchased.push(item);
+                    // Si no hay stock, agregar el ID del producto a la lista de no comprados
+                    productsNotPurchased.push(product._id);
                 } else {
                     // Si hay suficiente stock, restar la cantidad comprada del stock del producto
                     await productService.updateProductStock(product._id, stock - quantity);
-                    purchasedProducts.push(item);
-                    totalPrice += item.product.price * item.quantity;
                 }
             }
 
-            // Crear el ticket con los productos que sí se pudieron comprar
+            // Crear el ticket con los datos de la compra
             const ticket = await ticketService.createTicket({
                 user: req.user,
-                products: purchasedProducts,
-                totalPrice
+                products: cart.products,
+                totalPrice: cart.totalPrice
             });
 
-            // Actualizar el carrito del usuario para que solo contenga los productos no comprados
-            await cartService.updateCartProducts(cid, productsNotPurchased);
+            // Si hay productos no comprados, actualizar el carrito para quitarlos
+            if (productsNotPurchased.length > 0) {
+                await cartService.updateCartProducts(cid, cart.products.filter(item => !productsNotPurchased.includes(item.product._id)));
+            } else {
+                // Si todos los productos se pudieron comprar, vaciar el carrito
+                await cartService.emptyCart(cid);
+            }
 
             res.status(200).json({
                 status: 'success',
-                message: 'Compra realizada con éxito. Algunos productos no pudieron comprarse por falta de stock.',
-                productsNotPurchased: productsNotPurchased.map(item => item.product._id), // Devolver los IDs de los productos no comprados
+                message: 'Purchase completed successfully',
+                productsNotPurchased,
                 ticket
             });
         } catch (error) {

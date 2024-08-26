@@ -1,14 +1,20 @@
 import mongoose from "mongoose";
-import { cartService } from "../service/index.js";
+import { CartService } from "../service/index.js";
 import { adminOrUserAuth } from "../middlewares/Auth.middleware.js";
 import { CustomError, CART_ERROR_CODE } from "../service/errors/CustomError.js";
 import { addProductToCartError } from "../service/errors/info.js";
 import { logger } from "../utils/logger.js";
 import { ProductService } from "../service/index.js";
+import { ticketModel } from "../daos/MONGO/models/ticket.model.js";
+import { v4 as uuidv4 } from "uuid";
+import CartRepository from "../repositories/cart.repository.js"; //Se importa aqui porque desde el service no funciona
+import { CartsDao } from "../daos/factory.js"; //Se importa aqui porque desde el service no funciona
+import ProductRepository from "../repositories/product.repository.js";
+import { ProductsDao } from "../daos/factory.js";
 
 class CartController {
     constructor() {
-        this.cartService = cartService;
+        this.cartService = CartService;
         this.productService = ProductService;
     }
 
@@ -16,7 +22,7 @@ class CartController {
    // Método para obtener todos los carritos
     getAll = async (req, res) => {
         try {
-            const carts = await cartService.getAll();
+            const carts = await this.cartService.getAll();
             logger.info('Carritos obtenidos:', carts);
             res.send({ status: 'success', payload: carts });
         } catch (error) {
@@ -192,6 +198,83 @@ class CartController {
             res.status(500).json({ status: 'error', message: 'Error al vaciar el carrito' });
         }
     };
+
+    //Metodo de compras
+    async purchase(req, res) {
+        const { cid } = req.params;
+    
+        try {
+            // Instanciar el servicio de carrito y producto dentro del método
+            const cartService = new CartRepository(new CartsDao());
+    
+            // Obtener el carrito por ID
+            const cart = await cartService.getById(cid); // Usa cartService
+            if (!cart) {
+                return res.status(404).json({ message: 'Carrito no encontrado' });
+            }
+    
+            // Instanciar el servicio de productos dentro del método
+            const productService = new ProductRepository(new ProductsDao());
+    
+            // Verificar el stock de los productos en el carrito
+            const outOfStockProducts = [];
+            const productsToUpdate = [];
+    
+            for (const item of cart.products) {
+                const product = await productService.getOne(item.product._id);
+                if (!product || product.stock < item.quantity) {
+                    outOfStockProducts.push({
+                        productId: item.product._id,
+                        required: item.quantity,
+                        available: product ? product.stock : 0
+                    });
+                } else {
+                    productsToUpdate.push({
+                        productId: item.product._id,
+                        quantity: item.quantity
+                    });
+                }
+            }
+    
+            if (outOfStockProducts.length > 0) {
+                return res.status(400).json({
+                    message: 'No se pudo procesar la compra debido a falta de stock',
+                    outOfStockProducts
+                });
+            }
+    
+            // Calcular el total del carrito
+            let totalAmount = 0;
+            for (const item of cart.products) {
+                const product = await productService.getOne(item.product._id);
+                totalAmount += product.price * item.quantity;
+            }
+    
+            // Generar un código único para el ticket
+            const ticketCode = uuidv4();
+    
+            // Crear un ticket con los detalles de la compra
+            const ticket = await ticketModel.create({
+                code: ticketCode,
+                purchase_datetime: new Date(),
+                amount: totalAmount,
+                purchaser: req.user.email
+            });
+    
+            // Actualizar el stock de los productos
+            for (const { productId, quantity } of productsToUpdate) {
+                await productService.updateStock(productId, -quantity);
+            }
+    
+            // Vaciar el carrito después de la compra
+            await cartService.deleteDate(cid);
+    
+            res.status(200).json({ message: 'Compra realizada con éxito', ticket });
+        } catch (error) {
+            console.error('Error en purchase:', error);
+            res.status(500).json({ message: 'Error al realizar la compra', error: error.message });
+        }
+    }
 }
 
 export default CartController;

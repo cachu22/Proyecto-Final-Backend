@@ -6,6 +6,7 @@ import CartDaoMongo from "../daos/MONGO/MONGODBNUBE/cartsDao.mongo.js";
 import { adminOrUserAuth, adminAuth, authenticateToken, authenticateUser, authorizeRoles } from "../middlewares/Auth.middleware.js";
 import { ProductService, userService } from "../service/index.js";
 import { logger } from "../utils/logger.js";
+import { CartService } from "../service/index.js";
 
 // Cargar los datos de productos localfile
 const productsData = JSON.parse(fs.readFileSync(__dirname + '/file/products.json', 'utf-8'));
@@ -144,51 +145,90 @@ viewsRouter.get('/realtimeproducts', adminOrUserAuth, (req, res) => {
     logger.info('Página de productos en tiempo real renderizada - src/Routes/views.router.js', { products: productsData });
 });
 
-viewsRouter.get('/cart', adminOrUserAuth, (req, res) => {
-    const cartToShow = cartData.find(cart => cart['id de carrito'] === 3);
+// viewsRouter.get('/cart', adminOrUserAuth, (req, res) => {
+//     const cartToShow = cartData.find(cart => cart['id de carrito'] === 3);
 
-    if (!cartToShow) {
-        res.status(404).send('El carrito no fue encontrado');
-        logger.warn('Carrito no encontrado - src/Routes/views.router.js', { cartId: 3 });
-        return;
-    }
+//     if (!cartToShow) {
+//         res.status(404).send('El carrito no fue encontrado');
+//         logger.warn('Carrito no encontrado - src/Routes/views.router.js', { cartId: 3 });
+//         return;
+//     }
 
-    const cartInfo = {
-        id: cartToShow['id de carrito'],
-        products: cartToShow.products.map(product => ({
-            id: product['id de producto'],
-            quantity: product.quantity,
-            thumbnails: product.thumbnails
-        }))
-    };
+//     const cartInfo = {
+//         id: cartToShow['id de carrito'],
+//         products: cartToShow.products.map(product => ({
+//             id: product['id de producto'],
+//             quantity: product.quantity,
+//             thumbnails: product.thumbnails
+//         }))
+//     };
 
-    res.use('realTimeProducts', { cart: cartInfo });
-    logger.info('Carrito mostrado - src/Routes/views.router.js', { cart: cartInfo });
-});
+//     res.use('realTimeProducts', { cart: cartInfo });
+//     logger.info('Carrito mostrado - src/Routes/views.router.js', { cart: cartInfo });
+// });
 
-// Ruta para mostrar la vista de un carrito específico
-viewsRouter.get('/carts/:cid', adminOrUserAuth, async (req, res) => {
-    const { cid } = req.params;
+viewsRouter.get('/cart/:cid', adminOrUserAuth, async (req, res) => {
     try {
-        logger.info('ID del carrito - src/Routes/views.router.js:', cid); // Log para verificar el ID del carrito
-        const result = await manager.getCartById(cid);
-        logger.info('Datos del carrito - src/Routes/views.router.js:', result); // Log para verificar los datos del carrito
+        const cartId = req.params.cid;
 
-        if (!result) {
-            res.status(404).send({ status: 'error', message: 'No se encontró el ID especificado' });
-            logger.warn('Carrito no encontrado por ID - src/Routes/views.router.js', { cartId: cid });
-        } else {
-            // Convertir el resultado a un objeto plano
-            const cart = result.toObject();
-            const products = cart.products || [];
-            res.render('cart', { cartId: cid, cart, products });
-            logger.info('Carrito renderizado - src/Routes/views.router.js', { cartId: cid, cart });
+        // Obtén el carrito utilizando el servicio
+        const cartToShow = await CartService.getById(cartId);
+
+        if (!cartToShow) {
+            res.status(404).send('El carrito no fue encontrado');
+            logger.warn('Carrito no encontrado - src/Routes/views.router.js', { cartId });
+            return;
         }
+
+        // Calcula el totalPrice
+        const totalPrice = cartToShow.products.reduce((sum, product) => {
+            return sum + (product.product.price * product.quantity);
+        }, 0);
+
+        const cartInfo = {
+            _id: cartToShow.id,
+            products: cartToShow.products.map(product => ({
+                _id: product.product._id,
+                quantity: product.quantity,
+                thumbnails: product.product.thumbnails[0],
+                title: product.product.title,
+                description: product.product.description,
+                price: product.product.price
+            })),
+            totalPrice: totalPrice 
+        };
+
+        res.render('cart', { cart: cartInfo });
+        logger.info('Carrito mostrado - src/Routes/views.router.js', { cart: cartInfo });
     } catch (error) {
-        logger.error('Error al buscar el carrito por ID - src/Routes/views.router.js:', error);
-        res.status(500).send({ status: 'error', message: 'Error al buscar el carrito por ID' });
+        res.status(500).send('Error al obtener el carrito');
+        logger.error('Error al obtener el carrito - src/Routes/views.router.js', { error });
     }
 });
+
+// // Ruta para mostrar la vista de un carrito específico
+// viewsRouter.get('/carts/:cid', adminOrUserAuth, async (req, res) => {
+//     const { cid } = req.params;
+//     try {
+//         logger.info('ID del carrito - src/Routes/views.router.js:', cid); // Log para verificar el ID del carrito
+//         const result = await manager.getCartById(cid);
+//         logger.info('Datos del carrito - src/Routes/views.router.js:', result); // Log para verificar los datos del carrito
+
+//         if (!result) {
+//             res.status(404).send({ status: 'error', message: 'No se encontró el ID especificado' });
+//             logger.warn('Carrito no encontrado por ID - src/Routes/views.router.js', { cartId: cid });
+//         } else {
+//             // Convertir el resultado a un objeto plano
+//             const cart = result.toObject();
+//             const products = cart.products || [];
+//             res.render('cart', { cartId: cid, cart, products });
+//             logger.info('Carrito renderizado - src/Routes/views.router.js', { cartId: cid, cart });
+//         }
+//     } catch (error) {
+//         logger.error('Error al buscar el carrito por ID - src/Routes/views.router.js:', error);
+//         res.status(500).send({ status: 'error', message: 'Error al buscar el carrito por ID' });
+//     }
+// });
 
 // Ruta para subir la imagen utilizando multer
 viewsRouter.post('/upload-file', multerSingleUploader, adminOrUserAuth, (req, res) => {
