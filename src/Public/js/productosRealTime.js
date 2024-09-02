@@ -56,27 +56,41 @@ document.addEventListener('DOMContentLoaded', () => {
         socket.emit('addProduct', productData);
     });
 
+    // Obtener el token de autenticación almacenado en una cookie o almacenamiento local
+    const token = localStorage.getItem('token');
+
     // Actualizar el manejador de eventos clic a los botones "Eliminar"
     liveProducts.addEventListener('click', (e) => {
         if (e.target.classList.contains('eliminar-producto')) {
-            // Obtener el ID del producto a eliminar
+            // Obtener el ID del producto desde el atributo data-product-id
             const productId = e.target.getAttribute('data-product-id');
-            // Enviar una solicitud al servidor para eliminar el producto
-            fetch(`/api/products/${productId}`, {
-                method: 'DELETE'
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Si la eliminación es exitosa, emitir evento al servidor
-                    socket.emit('eliminarProducto', productId);
-                    console.log('Producto eliminado:', productId);
-                } else {
-                    console.error('Error al eliminar el producto');
-                }
-            })
-            .catch(error => {
-                console.error('Error al eliminar el producto - Log de /src/Public/js/productosRealTime.js:', error);
-            });
+            console.log('ID del producto a eliminar:', productId);
+
+            if (productId) {
+                // Enviar la solicitud al servidor para eliminar el producto
+                // Configuración de la solicitud DELETE
+                fetch(`/api/mgProducts/${productId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` // Incluye el token de autenticación
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Si la eliminación es exitosa, emitir evento al servidor
+                        socket.emit('eliminarProducto', productId);
+                        console.log('Producto eliminado:', productId);
+                    } else {
+                        console.error('Error al eliminar el producto');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al eliminar el producto - Log de /src/Public/js/productosRealTime.js:', error);
+                });
+            } else {
+                console.error('ID del producto no encontrado');
+            }
         }
     });
 

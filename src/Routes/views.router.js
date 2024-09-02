@@ -59,7 +59,7 @@ viewsRouter.get('/', async (req, res) => {
 async function addProduct(req, res) {
     const newProductData = req.body;
     try {
-        const newProduct = await productsManager.addProduct(newProductData);
+        const newProduct = await productService.create(newProductData);
         res.status(201).json(newProduct); // Respuesta con el nuevo producto creado
 
         logger.info('Nuevo producto agregado - src/Routes/views.router.js:', { newProduct });
@@ -140,9 +140,21 @@ viewsRouter.get('/gestionDeUsuarios', (req, res, next) => {
 });
 
 
-viewsRouter.get('/realtimeproducts', adminOrUserAuth, (req, res) => {
-    res.render('realTimeProducts', { products: productsData });
-    logger.info('Página de productos en tiempo real renderizada - src/Routes/views.router.js', { products: productsData });
+// viewsRouter.get('/realtimeproducts', adminOrUserAuth, (req, res) => {
+//     res.render('realTimeProducts', { products: productsData });
+//     logger.info('Página de productos en tiempo real renderizada - src/Routes/views.router.js', { products: productsData });
+// });
+
+viewsRouter.get('/realtimeproducts', adminOrUserAuth, async (req, res) => {
+    try {
+        const products = await ProductService.getAll();
+        const plainProducts = products.map(product => product.toObject()); // Convertir a objetos simples
+        res.render('realTimeProducts', { products: plainProducts });
+        logger.info('Página de productos en tiempo real renderizada - src/Routes/views.router.js', { products: plainProducts });
+    } catch (error) {
+        logger.error('Error al obtener productos', error);
+        res.status(500).send('Error al obtener productos');
+    }
 });
 
 // viewsRouter.get('/cart', adminOrUserAuth, (req, res) => {
@@ -236,6 +248,9 @@ viewsRouter.post('/upload-file', multerSingleUploader, adminOrUserAuth, (req, re
     logger.info('Imagen subida con éxito - src/Routes/views.router.js', { file: req.file });
     res.send('¡Imagen subida con éxito!');
 });
+
+// // Ruta para agregar un nuevo producto
+// viewsRouter.post('/realtimeproducts', adminOrUserAuth, addProduct);
 
 // Ruta para agregar un nuevo producto
 viewsRouter.post('/realtimeproducts', adminOrUserAuth, addProduct);

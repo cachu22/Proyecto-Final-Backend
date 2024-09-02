@@ -211,43 +211,36 @@ class ProductController {
             const productId = req.params.id;
             const userId = req.user?._id;
             const userRole = req.user?.role;
-
+    
             console.log('ID del producto recibido:', productId);
             console.log('ID del usuario:', userId);
             console.log('Rol del usuario:', userRole);
-
-            // Verifica si el ID del usuario está presente (es decir, si el usuario está autenticado)
+    
             if (!userId) {
-                // Responde con un error 401 (Unauthorized) y un mensaje de error si el usuario no está autenticado
                 return res.status(401).json({ status: 'error', message: 'Usuario no autenticado' });
             }
             
             const product = await this.productService.getOne(productId);
-
+    
             if (!product) {
                 return res.status(404).json({ status: 'error', message: 'Producto no encontrado' });
             }
-
+    
             if (!product.owner) {
                 return res.status(500).json({ status: 'error', message: 'Error interno del servidor: Owner del producto no encontrado' });
             }
-
-            if (userRole === 'admin') {
+    
+            if (userRole === 'admin' || (userRole === 'premium' && product.owner.toString() === userId.toString())) {
                 await this.productService.delete(productId);
                 return res.status(200).json({ status: 'success', message: 'Producto eliminado correctamente' });
             }
-
-            if (userRole === 'premium' && product.owner.toString() === userId.toString()) {
-                await this.productService.delete(productId);
-                return res.status(200).json({ status: 'success', message: 'Producto eliminado correctamente' });
-            }
-
+    
             return res.status(403).json({ status: 'error', message: 'No tiene permisos para eliminar este producto' });
         } catch (error) {
             console.error('Error al eliminar el producto - Log de /src/controllers/product.controller.js:', error);
-            res.status(500).json({ status: 'error', message: 'Error al eliminar el producto', error: error.message });
-    }
-};
+            return res.status(500).json({ status: 'error', message: 'Error al eliminar el producto', error: error.message });
+        }
+    };
 }
 
 export default ProductController;

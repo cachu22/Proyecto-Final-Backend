@@ -15,7 +15,7 @@
         <!-- Menú de navegación -->
         <nav class="navbar navbar-expand-lg bg-light w-100">
             <div class="container-fluid">
-                <a class="navbar-brand" href="../index.html">
+                <a class="navbar-brand" href="../">
                     <!-- Logo -->
                     <img src="../img/logo-inicio.png" alt="Logo" class="logo">
                 </a>
@@ -114,7 +114,7 @@
             <p>Descripción: {{this.description}}</p>
             <p>Stock: {{this.stock}}</p>
             <!-- Botón para eliminar el producto -->
-            <button class="eliminar-producto" data-product-id="{{this.id}}">Eliminar</button>
+            <button class="eliminar-producto" data-product-id="{{this._id}}">Eliminar</button>
         </div>
         {{/each}}
     </div>

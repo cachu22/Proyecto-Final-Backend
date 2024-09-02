@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import request from 'supertest';
+import { userService } from '../src/service/index.js'
 
 const requester = request('http://localhost:8000');
 
@@ -239,6 +240,79 @@ let token;
 // });     
 
 
-                    // TEST SOBRE SESSIONS
-
-
+        // TEST SOBRE CAMBIO DE ROL SUBIENDO DOCS
+        describe('User role change to premium', function() {
+            this.timeout(10000);
+        
+            let userId;
+        
+            before(async () => {
+                try {
+                    // Crea un usuario de prueba
+                    const user = await request(app)
+                        .post('/api/sessions/register')
+                        .send({
+                            first_name: 'Test',
+                            last_name: 'Seis',
+                            email: 'test6@test.com',
+                            password: 'asd',
+                            role: 'user',
+                            documents: []
+                        })
+                        .expect(200)
+                        .then((res) => {
+                            userId = res.body.payload._id;
+                        });
+                } catch (error) {
+                    console.error('Error en el hook before:', error);
+                    throw error;
+                }
+            });
+        
+            after(async () => {
+                try {
+                    // Limpia el entorno de prueba eliminando el usuario de prueba
+                    await request(app)
+                        .delete(`/api/users/${userId}`)
+                        .expect(200);
+                } catch (error) {
+                    console.error('Error en el hook after:', error);
+                    throw error;
+                }
+            });
+        
+            it('should upload documents and update user role to premium', async () => {
+                try {
+                    // Sube documentos
+                    await request(app)
+                        .post(`/api/users/${userId}/documents`)
+                        .attach('document', 'path/to/Identificación.jpg')
+                        .attach('document', 'path/to/Comprobante_de_domicilio.jpg')
+                        .attach('document', 'path/to/Comprobante_de_estado_de_cuenta.jpg')
+                        .expect(200)
+                        .then((res) => {
+                            expect(res.body.message).to.equal('Documentos subidos exitosamente');
+                        });
+        
+                    // Cambia el rol a premium
+                    await request(app)
+                        .put(`/api/users/premium/${userId}`)
+                        .expect(200)
+                        .then((res) => {
+                            expect(res.body.status).to.equal('success');
+                            expect(res.body.user.role).to.equal('premium');
+                        });
+        
+                    // Verifica que el rol ha sido cambiado
+                    const updatedUser = await request(app)
+                        .get(`/api/users/${userId}`)
+                        .expect(200)
+                        .then((res) => res.body.payload);
+                        
+                    expect(updatedUser.role).to.equal('premium');
+                } catch (error) {
+                    console.error('Error en la prueba:', error);
+                    throw error;
+                }
+            });
+        });
