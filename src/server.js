@@ -206,6 +206,9 @@ io.on('connection', (socket) => {
     });
 });
 
+// Exportar app para utilizarlo en supertest
+export { app };
+
 export const getServer = () => httpServer.listen(port, error => {
     if (error) {
         logger.error("Error al iniciar el servidor - /server.js:", error);
