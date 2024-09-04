@@ -30,60 +30,121 @@ sessionsRouter.get('/github', passport.authenticate('github', { scope: 'user:ema
     logger.info('Redirigiendo a GitHub para autenticación - src/Routes/api/sessions.router.js');
 });
 
+// sessionsRouter.post('/register', async (req, res, next) => {
+//     logger.info('Se recibió una solicitud de registro - src/Routes/api/sessions.router.js', req.body);
+
+//     const { first_name, last_name, password, email, role, age } = req.body;
+
+//     // Validación de campos obligatorios
+//     if (!password || !email) {
+//         logger.info('Error: Faltan credenciales en la solicitud de registro - src/Routes/api/sessions.router.js');
+//         return res.status(401).send({ status: 'error', message: 'Debe ingresar todas las credenciales' });
+//     }
+
+//     if (!first_name || !last_name || !email) {
+//         CustomError.createError({
+//             name: 'UserValidationError',
+//             cause: generateUserError({ first_name, last_name, email }),
+//             message: 'Error al crear el usuario',
+//             code: EError.INVALID_TYPES_ERROR
+//         });
+//     }
+
+//     try {
+//         // Verificar si ya existe un usuario con el mismo email
+//         logger.info('Buscando usuario en la base de datos - src/Routes/api/sessions.router.js...', { email });
+//         const userFound = await userService.get({ email });
+
+//         if (userFound) {
+//             logger.info('Error: El usuario ya existe - src/Routes/api/sessions.router.js');
+//             return res.status(401).send({ status: 'error', message: 'El usuario ya existe' });
+//         }
+
+//         // Preparar nuevo usuario
+//         const newUser = {
+//             first_name,
+//             last_name,
+//             email,
+//             age,
+//             role,
+//             password: createHash(password)
+//         };
+
+//         // Crear el usuario en la base de datos
+//         logger.info('Creando un nuevo usuario en la base de datos - src/Routes/api/sessions.router.js...', newUser);
+//         const result = await userService.create(newUser);
+
+//         // Generar token JWT para el usuario registrado
+//         const token = generateToken({ id: result._id });
+
+//         logger.info('Usuario registrado exitosamente - src/Routes/api/sessions.router.js', { userId: result._id });
+//         res.cookie('token', token, { maxAge: 60 * 60 * 1000 * 24, httpOnly: true })
+//             .redirect('/login');
+//     } catch (error) {
+//         logger.error('Error en el registro de usuario - src/Routes/api/sessions.router.js', { error });
+//         next(error); // Pasar el error al middleware de manejo de errores
+//     }
+// });
+
 sessionsRouter.post('/register', async (req, res, next) => {
-    logger.info('Se recibió una solicitud de registro - src/Routes/api/sessions.router.js', req.body);
+  logger.info('Se recibió una solicitud de registro - src/Routes/api/sessions.router.js', req.body);
 
-    const { first_name, last_name, password, email, role, age } = req.body;
+  const { first_name, last_name, password, email, role, age } = req.body;
 
-    // Validación de campos obligatorios
-    if (!password || !email) {
-        logger.info('Error: Faltan credenciales en la solicitud de registro - src/Routes/api/sessions.router.js');
-        return res.status(401).send({ status: 'error', message: 'Debe ingresar todas las credenciales' });
-    }
+  // Validación de campos obligatorios
+  if (!password || !email) {
+      logger.info('Error: Faltan credenciales en la solicitud de registro - src/Routes/api/sessions.router.js');
+      return res.status(401).send({ status: 'error', message: 'Debe ingresar todas las credenciales' });
+  }
 
-    if (!first_name || !last_name || !email) {
-        CustomError.createError({
-            name: 'UserValidationError',
-            cause: generateUserError({ first_name, last_name, email }),
-            message: 'Error al crear el usuario',
-            code: EError.INVALID_TYPES_ERROR
-        });
-    }
+  if (!first_name || !last_name || !email) {
+      CustomError.createError({
+          name: 'UserValidationError',
+          cause: generateUserError({ first_name, last_name, email }),
+          message: 'Error al crear el usuario',
+          code: EError.INVALID_TYPES_ERROR
+      });
+  }
 
-    try {
-        // Verificar si ya existe un usuario con el mismo email
-        logger.info('Buscando usuario en la base de datos - src/Routes/api/sessions.router.js...', { email });
-        const userFound = await userService.get({ email });
+  try {
+      // Verificar si ya existe un usuario con el mismo email
+      logger.info('Buscando usuario en la base de datos - src/Routes/api/sessions.router.js...', { email });
+      const userFound = await userService.get({ email });
 
-        if (userFound) {
-            logger.info('Error: El usuario ya existe - src/Routes/api/sessions.router.js');
-            return res.status(401).send({ status: 'error', message: 'El usuario ya existe' });
-        }
+      if (userFound) {
+          logger.info('Error: El usuario ya existe - src/Routes/api/sessions.router.js');
+          return res.status(401).send({ status: 'error', message: 'El usuario ya existe' });
+      }
 
-        // Preparar nuevo usuario
-        const newUser = {
-            first_name,
-            last_name,
-            email,
-            age,
-            role,
-            password: createHash(password)
-        };
+      // Preparar nuevo usuario
+      const newUser = {
+          first_name,
+          last_name,
+          email,
+          age,
+          role,
+          password: createHash(password)
+      };
 
-        // Crear el usuario en la base de datos
-        logger.info('Creando un nuevo usuario en la base de datos - src/Routes/api/sessions.router.js...', newUser);
-        const result = await userService.create(newUser);
+      // Crear el usuario en la base de datos
+      logger.info('Creando un nuevo usuario en la base de datos - src/Routes/api/sessions.router.js...', newUser);
+      const result = await userService.create(newUser);
 
-        // Generar token JWT para el usuario registrado
-        const token = generateToken({ id: result._id });
+      // Generar token JWT para el usuario registrado
+      const token = generateToken({ id: result._id });
 
-        logger.info('Usuario registrado exitosamente - src/Routes/api/sessions.router.js', { userId: result._id });
-        res.cookie('token', token, { maxAge: 60 * 60 * 1000 * 24, httpOnly: true })
-            .redirect('/login');
-    } catch (error) {
-        logger.error('Error en el registro de usuario - src/Routes/api/sessions.router.js', { error });
-        next(error); // Pasar el error al middleware de manejo de errores
-    }
+      logger.info('Usuario registrado exitosamente - src/Routes/api/sessions.router.js', { userId: result._id });
+      // Enviar respuesta JSON en lugar de redirigir
+      res.status(200).json({
+          status: 'success',
+          message: 'Usuario registrado exitosamente',
+          token,
+          userId: result._id
+      });
+  } catch (error) {
+      logger.error('Error en el registro de usuario - src/Routes/api/sessions.router.js', { error });
+      next(error); // Pasar el error al middleware de manejo de errores
+  }
 });
 
 sessionsRouter.post('/failregister', async (req, res) => {

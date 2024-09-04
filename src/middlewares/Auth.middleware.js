@@ -172,3 +172,10 @@ export const authorizeRoles = (req, res, next) => {
     console.log('Rol del usuario autorizado:', userRole);
     next();
 };
+
+export const checkFilesUploaded = (req, res, next) => {
+    if (!req.files || Object.keys(req.files).length === 0) {
+        return res.status(400).json({ message: "No se subieron archivos" });
+    }
+    next();
+};

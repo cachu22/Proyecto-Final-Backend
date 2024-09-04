@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import UserController from '../../controllers/users.controller.js';
 import passport from 'passport';
-import { authenticateToken, adminAuth } from '../../middlewares/Auth.middleware.js';
+import { authenticateToken, adminAuth, checkFilesUploaded } from '../../middlewares/Auth.middleware.js';
 import { multerMultipleUploader } from '../../utils/multer.js';
 
 const userController = new UserController()
@@ -25,6 +25,6 @@ router.post('/', create);
 router.put('/:uid', update);
 router.delete('/:uid', deleteData);
 router.put('/premium/:uid', authenticateToken, adminAuth, changeUserRole);
-router.post('/:uid/documents', multerMultipleUploader, documents);
+router.post('/:uid/documents', multerMultipleUploader, checkFilesUploaded, documents);
 
 export default router;

@@ -5,6 +5,7 @@ import { generateUserError } from "../service/errors/info.js";
 import { EError } from "../service/errors/enums.js";
 import { createHash } from "../utils/bcrypt.js";
 import { logger } from "../utils/logger.js";
+import { checkFilesUploaded } from "../middlewares/Auth.middleware.js";
 
 class UserController {
     constructor() {
@@ -147,30 +148,74 @@ class UserController {
     //     }
     // };
 
+                                // changeUserRole = async (req, res) => {
+                                //     try {
+                                //         const { uid } = req.params;
+                                //         const user = await this.userService.getUser(uid);
+                                
+                                //         if (!user) {
+                                //             const errorMessage = 'Usuario no encontrado';
+                                //             logger.error(`Error al actualizar el rol de usuario: ${errorMessage} - Log de /src/controllers/user.controller.js`);
+                                //             return res.status(404).json({ status: 'error', message: errorMessage });
+                                //         }
+                                
+                                //         // Verifica si el rol actual es 'user' para cambiarlo a 'premium'
+                                //         if (user.role === 'user') {
+                                //             const requiredDocs = ['Identificación'];
+                                            
+                                //             if (!req.files || !req.files.document) {
+                                //                 const errorMessage = 'No se han subido documentos.';
+                                //                 logger.error(`Error al actualizar el rol de usuario: ${errorMessage} - Log de /src/controllers/user.controller.js`);
+                                //                 return res.status(400).json({ status: 'error', message: errorMessage });
+                                //             }
+                                
+                                //             const uploadedDocs = req.files.document.map(doc => doc.originalname);
+                                
+                                //             const hasAllDocs = requiredDocs.every(doc => uploadedDocs.includes(doc));
+                                
+                                //             if (!hasAllDocs) {
+                                //                 const errorMessage = 'No se puede actualizar a premium. Documentación incompleta.';
+                                //                 logger.error(`Error al actualizar el rol de usuario: ${errorMessage} - Log de /src/controllers/user.controller.js`);
+                                //                 return res.status(400).json({ status: 'error', message: errorMessage });
+                                //             }
+                                
+                                //             // Guardar los documentos subidos en el usuario
+                                //             req.files.document.forEach(doc => {
+                                //                 user.documents.push({
+                                //                     name: doc.originalname,
+                                //                     reference: doc.path
+                                //                 });
+                                //             });
+                                
+                                //             // Cambia el rol del usuario a 'premium'
+                                //             user.role = 'premium';
+                                //         } else if (user.role === 'premium') {
+                                //             // Cambia el rol del usuario de vuelta a 'user'
+                                //             user.role = 'user';
+                                //         }
+                                
+                                //         await user.save();
+                                        
+                                //         res.status(200).json({ status: 'success', message: 'Rol de usuario actualizado.', user });
+                                //     } catch (error) {
+                                //         logger.error(`Error al actualizar el rol de usuario: ${error.message} - Log de /src/controllers/user.controller.js`);
+                                //         res.status(500).json({ status: 'error', message: 'Error al actualizar el rol de usuario.', error: error.message });
+                                //     }
+                                // };
+
+    //Para test
     changeUserRole = async (req, res) => {
         try {
             const { uid } = req.params;
             const user = await this.userService.getUser(uid);
-            
+    
             if (!user) {
                 const errorMessage = 'Usuario no encontrado';
                 logger.error(`Error al actualizar el rol de usuario: ${errorMessage} - Log de /src/controllers/user.controller.js`);
                 return res.status(404).json({ status: 'error', message: errorMessage });
             }
     
-            // Verifica si el rol actual es 'user' para cambiarlo a 'premium'
             if (user.role === 'user') {
-                const requiredDocs = ['Identificación', 'Comprobante de domicilio', 'Comprobante de estado de cuenta'];
-                const uploadedDocs = user.documents.map(doc => doc.name);
-    
-                const hasAllDocs = requiredDocs.every(doc => uploadedDocs.includes(doc));
-    
-                if (!hasAllDocs) {
-                    const errorMessage = 'No se puede actualizar a premium. Documentación incompleta.';
-                    logger.error(`Error al actualizar el rol de usuario: ${errorMessage} - Log de /src/controllers/user.controller.js`);
-                    return res.status(400).json({ status: 'error', message: errorMessage });
-                }
-    
                 // Cambia el rol del usuario a 'premium'
                 user.role = 'premium';
             } else if (user.role === 'premium') {
@@ -179,18 +224,19 @@ class UserController {
             }
     
             await user.save();
-            
+    
             res.status(200).json({ status: 'success', message: 'Rol de usuario actualizado.', user });
         } catch (error) {
             logger.error(`Error al actualizar el rol de usuario: ${error.message} - Log de /src/controllers/user.controller.js`);
             res.status(500).json({ status: 'error', message: 'Error al actualizar el rol de usuario.', error: error.message });
         }
     };
+    
   
     documents = async (req, res) => {
         try {
             const userId = req.params.uid;
-            const user = await userModel.findById(userId);
+            const user = await userService.getUser(userId);
     
             if (!user) {
                 return res.status(404).json({ message: 'Usuario no encontrado' });
@@ -205,9 +251,9 @@ class UserController {
             });
     
             await user.save();
-            res.status(200).json({ message: 'Documentos subidos exitosamente' });
+            return res.status(200).json({ message: 'Documentos subidos exitosamente' });
         } catch (error) {
-            res.status(500).json({ message: 'Error al subir documentos', error: error.message });
+            return res.status(500).json({ message: 'Error al subir documentos', error: error.message });
         }
     };
 }

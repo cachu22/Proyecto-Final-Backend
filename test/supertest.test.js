@@ -2,8 +2,10 @@ import { expect } from 'chai';
 import request from 'supertest';
 import { userService } from '../src/service/index.js'
 import { app } from '../src/server.js';
+import FormData from 'form-data';
+import { Should } from 'chai';
 
-const requester = request('http://localhost:8000');
+request(app)
 
 let token;
 
@@ -240,88 +242,103 @@ let token;
 //     });
 // });     
 
-        // TEST SOBRE CAMBIO DE ROL SUBIENDO DOCS
-        describe('User role change to premium', function() {
-            this.timeout(10000);
-        
-            let userId;
-        
-            // before(async () => {
-                try {
-                    it('Debe registrar un nuevo usuario y redirigir', async () => {
-                        const mockUser = {
-                            first_name: 'test',
-                            last_name: 'deRol',
-                            email: 'testRol@test.com',
-                            password: 'asd',
-                            age: 36,
-                            role: 'premium'
-                        };
 
-                        console.log('datos enviados desde el supertest1', mockUser);
-                        
-                
-                        const response = await requester
-                            .post('/api/sessions/register')
-                            .send(mockUser);
-                
-                        // Verifica que el código de estado sea 302 para redirección
-                        expect(response.statusCode).to.equal(302);
-                
-                        // Aquí puedes manejar la redirección si es necesario
-                        // Por ejemplo, puedes seguir la redirección y verificar el resultado final
-                    });
-                } catch (error) {
-                    console.error('Error al crear el usuario:', error);
-                    throw error;
-                };
-            
+                            // describe('Test avanzado de sesión y cambio de rol', function() {
+                            //     let userToken;
+                            //     let adminToken;
+                            //     let userId;
 
-            after(async () => {
-                try {
-                    // Limpia el entorno de prueba eliminando el usuario de prueba
-                    await request(app)
-                        .delete(`/api/usersDB/${userId}`)
-                        .expect(200);
-                } catch (error) {
-                    console.error('Error en el hook after:', error);
-                    throw error;
-                }
+                            //     before(async function() {
+                            //         // Registra un nuevo usuario
+                            //         const userResponse = await request(app)
+                            //             .post('/api/sessions/register')
+                            //             .send({
+                            //                 first_name: 'test',
+                            //                 last_name: 'deRol',
+                            //                 email: 'testRol@test.com',
+                            //                 password: 'asd',
+                            //                 age: 36,
+                            //                 role: 'user'
+                            //             });
+                            //         userToken = userResponse.body.token;
+                            //         userId = userResponse.body.userId;
+
+                            //         // Inicia sesión para obtener el token de admin
+                            //         const adminResponse = await request(app)
+                            //             .post('/api/sessions/login')
+                            //             .send({
+                            //                 email: 'asd@asd.com',
+                            //                 password: 'asd'
+                            //             });
+                            //         adminToken = adminResponse.body.token;
+                            //     });
+
+                            //     it('Debería permitir al admin cambiar el rol del usuario de "user" a "premium"', function(done) {
+                            //         request(app)
+                            //             .put(`/api/usersDB/premium/${userId}`)
+                            //             .set('Authorization', `Bearer ${adminToken}`)
+                            //             .attach('documents', 'path/to/identificacion.pdf')
+                            //             // .expect(200)
+                            //             .end((err, res) => {
+                            //                 if (err) return done(err);
+
+                            //                 request(app)
+                            //                     .put(`/api/usersDB/premium/${userId}`)
+                            //                     .set('Authorization', `Bearer ${adminToken}`)
+                            //                     .send({ role: 'premium' })
+                            //                     // .expect(200)
+                            //                     .end((err, res) => {
+                            //                         if (err) return done(err);
+                            //                         expect(res.text).to.include('Rol cambiado exitosamente');
+                            //                         done();
+                            //                     });
+                            //             });
+                            //     });
+                            // });
+
+//Para test
+
+describe('Test avanzado de sesión y cambio de rol', function() {
+    let userToken;
+    let adminToken;
+    let userId;
+
+    before(async function() {
+        // Registra un nuevo usuario
+        const userResponse = await request(app)
+            .post('/api/sessions/register')
+            .send({
+                first_name: 'test',
+                last_name: 'deRol',
+                email: 'testRol@test.com',
+                password: 'asd',
+                age: 36,
+                role: 'user'
             });
-        })
-        
-            // it('should upload documents and update user role to premium', async () => {
-            //     try {
-            //         // Sube documentos
-            //         await request(app)
-            //             .post(`/api/users/${userId}/documents`)
-            //             .attach('document', 'path/to/Identificación.jpg')
-            //             .attach('document', 'path/to/Comprobante_de_domicilio.jpg')
-            //             .attach('document', 'path/to/Comprobante_de_estado_de_cuenta.jpg')
-            //             .expect(200)
-            //             .then((res) => {
-            //                 expect(res.body.message).to.equal('Documentos subidos exitosamente');
-            //             });
-        
-            //         // Cambia el rol a premium
-            //         await request(app)
-            //             .put(`/api/users/premium/${userId}`)
-            //             .expect(200)
-            //             .then((res) => {
-            //                 expect(res.body.status).to.equal('success');
-            //                 expect(res.body.user.role).to.equal('premium');
-            //             });
-        
-            //         // Verifica que el rol ha sido cambiado
-            //         const updatedUser = await request(app)
-            //             .get(`/api/users/${userId}`)
-            //             .expect(200)
-            //             .then((res) => res.body.payload);
-                        
-            //         expect(updatedUser.role).to.equal('premium');
-            //     } catch (error) {
-            //         console.error('Error en la prueba:', error);
-            //         throw error;
-            //     }
-            // });
-        // });
+        userToken = userResponse.body.token;
+        userId = userResponse.body.userId;
+
+        // Inicia sesión para obtener el token de admin
+        const adminResponse = await request(app)
+            .post('/api/sessions/login')
+            .send({
+                email: 'asd@asd.com',
+                password: 'asd'
+            });
+        adminToken = adminResponse.body.token;
+    });
+
+    it('Debería permitir al admin cambiar el rol del usuario de "user" a "premium"', function(done) {
+        request(app)
+            .put(`/api/usersDB/premium/${userId}`)
+            .set('Authorization', `Bearer ${adminToken}`)
+            .send({ role: 'premium' }) // No se envían archivos
+            .expect(200)
+            .end((err, res) => {
+                if (err) return done(err);
+                // Verifica que el rol se haya cambiado exitosamente
+                expect(res.body.message).to.include('Rol de usuario actualizado');
+                done();
+            });
+    });
+});
