@@ -26,8 +26,8 @@ export const addProductError = (Product) => {
     return errorMessage;
 }
 
-export const addProductToCartError = (productId, cartId, errorDetails) => {
-    const errorMessage = `Error al agregar el producto con ID ${productId} al carrito con ID ${cartId}.
+export const addProductToCartError = (pid, cartId, errorDetails) => {
+    const errorMessage = `Error al agregar el producto con ID ${pid} al carrito con ID ${cartId}.
     Detalles del error: ${errorDetails}`;
     logger.error('Error al agregar producto al carrito - src/service/errors/info.js:', errorMessage);
     return errorMessage;

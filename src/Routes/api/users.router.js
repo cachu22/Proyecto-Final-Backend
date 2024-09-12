@@ -24,7 +24,7 @@ router.get('/user-info/:uid', getOneInfo);
 router.post('/', create);
 router.put('/:uid', update);
 router.delete('/:uid', deleteData);
-router.put('/premium/:uid', authenticateToken, adminAuth, changeUserRole);
+router.put('/premium/:uid', authenticateToken, multerMultipleUploader, adminAuth, changeUserRole);
 router.post('/:uid/documents', multerMultipleUploader, checkFilesUploaded, documents);
 
 export default router;

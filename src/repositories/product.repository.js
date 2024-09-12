@@ -24,6 +24,8 @@ export default class ProductRepository {
         return product;
     }
 
+    
+
     // Crear un nuevo producto
     create = async (productData) => {
         const newProduct = await this.productDao.create(productData);
@@ -45,9 +47,9 @@ export default class ProductRepository {
         return result;
     };
 
-    updateStock = async (productId, quantityChange) => {
+    updateStock = async (pid, quantityChange) => {
         return productModel.findByIdAndUpdate(
-            productId,
+            pid,
             { $inc: { stock: quantityChange } }, // Incrementar o decrementar el stock
             { new: true } // Devuelve el documento actualizado
         );

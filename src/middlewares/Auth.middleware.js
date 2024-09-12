@@ -58,7 +58,30 @@ export function userAuth(req, res, next) {
 }
 
 
+// export const authenticateToken = (req, res, next) => {
+//     const authHeader = req.headers['authorization'];
+//     const token = authHeader && authHeader.split(' ')[1];
+
+//     if (token == null) return res.status(401).json({ status: 'error', message: 'Token no proporcionado' });
+
+//     jwt.verify(token, objectConfig.jwt_private_key, (err, user) => {
+//         if (err) return res.status(403).json({ status: 'error', message: 'Token inválido' });
+
+//         // Almacena el usuario en `req.user`
+//         req.user = user;
+
+//         // Para depuración (opcional)
+//         console.log('Datos del authHeader:', authHeader);
+//         console.log('Datos del token:', token);
+//         console.log('Datos de req.user:', req.user);
+        
+//         next();
+//     });
+// };
+
 export const authenticateToken = (req, res, next) => {
+    console.log('Autenticando token authenticateToken...');
+    console.log('Parámetros antes de autenticación authenticateToken:', req.params);
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
@@ -67,14 +90,8 @@ export const authenticateToken = (req, res, next) => {
     jwt.verify(token, objectConfig.jwt_private_key, (err, user) => {
         if (err) return res.status(403).json({ status: 'error', message: 'Token inválido' });
 
-        // Almacena el usuario en `req.user`
         req.user = user;
-
-        // Para depuración (opcional)
-        console.log('Datos del authHeader:', authHeader);
-        console.log('Datos del token:', token);
-        console.log('Datos de req.user:', req.user);
-        
+        console.log('Token autenticado, datos del usuario:', req.user); // Añadido para depuración
         next();
     });
 };
@@ -137,7 +154,29 @@ export const isAuthenticated = (req, res, next) => {
     }
 };
 
+// export const authenticateUser = async (req, res, next) => {
+//     try {
+//         const userId = req.user && req.user.id;
+//         if (!userId) {
+//             return res.status(401).json({ status: 'error', message: 'Usuario no autenticado' });
+//         }
+
+//         const user = await userService.getUser(userId);
+//         if (!user) {
+//             return res.status(401).json({ status: 'error', message: 'Usuario no encontrado' });
+//         }
+
+//         console.log('Usuario encontrado:', user);
+//         req.user = user;
+//         next();
+//     } catch (error) {
+//         res.status(500).json({ status: 'error', message: 'Error en la autenticación del usuario', error: error.message });
+//     }
+// };
+
 export const authenticateUser = async (req, res, next) => {
+    console.log('Autenticando usuario authenticateUser...');
+    console.log('Parámetros antes de autenticación del usuario authenticateUser:', req.params);
     try {
         const userId = req.user && req.user.id;
         if (!userId) {
@@ -149,27 +188,39 @@ export const authenticateUser = async (req, res, next) => {
             return res.status(401).json({ status: 'error', message: 'Usuario no encontrado' });
         }
 
-        console.log('Usuario encontrado:', user);
         req.user = user;
+        console.log('Usuario autenticado:', req.user); // Añadido para depuración
         next();
     } catch (error) {
         res.status(500).json({ status: 'error', message: 'Error en la autenticación del usuario', error: error.message });
     }
 };
 
-export const authorizeRoles = (req, res, next) => {
-    if (typeof res.status !== 'function') {
-        console.error('res no es un objeto de respuesta de Express');
-        return next(new Error('Invalid response object'));
-    }
+// export const authorizeRoles = (req, res, next) => {
+//     if (typeof res.status !== 'function') {
+//         console.error('res no es un objeto de respuesta de Express');
+//         return next(new Error('Invalid response object'));
+//     }
 
+//     const userRole = req.user && req.user.role;
+//     if (!userRole || (userRole !== 'admin' && userRole !== 'premium')) {
+//         console.error('Error en authorizeRoles:', req.user);
+//         return res.status(403).json({ status: 'error', message: 'No tiene permisos para realizar esta acción' });
+//     }
+
+//     console.log('Rol del usuario autorizado:', userRole);
+//     next();
+// };
+
+export const authorizeRoles = (req, res, next) => {
+    console.log('Autorizando roles authorizeRoles...');
+    console.log('Parámetros antes de autorización authorizeRoles:', req.params);
     const userRole = req.user && req.user.role;
     if (!userRole || (userRole !== 'admin' && userRole !== 'premium')) {
-        console.error('Error en authorizeRoles:', req.user);
         return res.status(403).json({ status: 'error', message: 'No tiene permisos para realizar esta acción' });
     }
 
-    console.log('Rol del usuario autorizado:', userRole);
+    console.log('Rol del usuario autorizado:', userRole); // Añadido para depuración
     next();
 };
 

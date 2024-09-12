@@ -55,11 +55,11 @@ if (token) {
 }
 
 // Función para agregar un producto al carrito
-function addToCart(productId) {
-    console.log("Añadiendo producto al carrito - Log de /src/Public/js/producto.js:", productId);
+function addToCart(pid) {
+    console.log("Añadiendo producto al carrito - Log de /src/Public/js/producto.js:", pid);
 
-    // Verifica si productId es válido
-    if (!productId) {
+    // Verifica si pid es válido
+    if (!pid) {
         console.error('ID del producto inválido - Log de /src/Public/js/producto.js.');
         Swal.fire('Error', 'ID del producto inválido.', 'error');
         return;
@@ -83,7 +83,7 @@ function addToCart(productId) {
     console.log("Datos enviados - Log de /src/Public/js/producto.js:", data);
 
     $.ajax({
-        url: `${apiUrl}/api/cartsDB/${cartId}/product/${productId}`,
+        url: `${apiUrl}/api/cartsDB/${cartId}/product/${pid}`,
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(data),
@@ -135,17 +135,17 @@ $.ajax({
             // Asignar el evento click a los botones "Agregar al carrito" en la vista de tarjetas
             $(document).on('click', '.add-to-cart-btn', function() {
                 console.log("Botón 'Agregar al carrito' clicado desde la tarjeta - Log de /src/Public/js/producto.js");
-                let productId = $(this).data('product-id');
-                addToCart(productId);
+                let pid = $(this).data('product-id');
+                addToCart(pid);
             });
 
             // Asignar el evento click a los botones en el modal
             $(document).on('click', '.btn-primary', function() {
-                let productId = $(this).data('product-id');
-                console.log("Button clicked. Product ID - Log de /src/Public/js/producto.js:", productId);
+                let pid = $(this).data('product-id');
+                console.log("Button clicked. Product ID - Log de /src/Public/js/producto.js:", pid);
 
                 $.ajax({
-                    url: `${apiUrl}/api/mgProducts/${productId}`,
+                    url: `${apiUrl}/api/mgProducts/${pid}`,
                     method: 'GET',
                     success: function(response) {
                         console.log("Product details received - Log de /src/Public/js/producto.js:", response);

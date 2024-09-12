@@ -48,117 +48,88 @@
     </header>
 
     <main id="servicios">
-    <section>
-        <h3 class="p-servicios">Agregar nuevo producto</h3>
-        <form id="addProductForm" class="padre-cards">
-            <div class="mb-3">
-                <label for="status" class="form-label">Estado</label>
-                    <select class="form-select" id="status" name="status" required>
-                        <option value="true">True</option>
-                        <option value="false">False</option>
-                    </select>
+        <section>
+            <h3 class="p-servicios">Agregar nuevo producto</h3>
+            <div class="Formulario-filtro">
+                <form action="/api/mgProducts" method="POST" id="productForm" class="form-group w-150">
+                    <label for="title">Titulo del producto</label>
+                    <input type="text" name="title" id="title" class="form-control">
+                    <label for="model">Modelo</label>
+                    <input type="text" name="model" id="model" class="form-control">
+                    <label for="description">Descripción</label>
+                    <input type="text" name="description" id="description" class="form-control">
+                    <label for="price">Precio</label>
+                    <input type="text" name="price" id="price" class="form-control">
+                    <label for="thumbnails">Imagen</label>
+                    <input type="text" name="thumbnails" id="thumbnails" class="form-control">
+                    <label for="code">Código</label>
+                    <input type="text" name="code" id="code" class="form-control">
+                    <label for="stock">Stock</label>
+                    <input type="text" name="stock" id="stock" class="form-control">
+                    <label for="category">Categoría o departamento</label>
+                    <input type="text" name="category" id="category" class="form-control">
+                    <button class="btn btn-outline-dark w-100 mt-3">Enviar</button>
+                </form>
             </div>
-            <div class="mb-3">
-                <label for="thumbnails" class="form-label">Selecciona una imagen</label>
-                <select class="form-select" id="thumbnails" name="thumbnails" required>
-                    <option value="" selected disabled>Selecciona una imagen</option>
-                    <option value="https://picsum.photos/700/409?random">Imagen 1</option>
-                    <option value="https://picsum.photos/700/410?random">Imagen 2</option>
-                    <option value="https://picsum.photos/700/411?random">Imagen 3</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="title" class="form-label">Título</label>
-                <input type="text" class="form-control" id="title" name="title" placeholder="Título" required>
-            </div>
-            <div class="mb-3">
-                <label for="description" class="form-label">Descripción</label>
-                <textarea class="form-control" id="description" name="description" placeholder="Descripción" required></textarea>
-            </div>
-            <div class="mb-3">
-                <label for="price" class="form-label">Precio</label>
-                <input type="number" class="form-control" id="price" name="price" min="0" step="0.01" placeholder="Precio" required>
-            </div>
-            <div class="mb-3">
-                <label for="code" class="form-label">Código</label>
-                <input type="text" class="form-control" id="code" name="code" placeholder="Código" required>
-            </div>
-            <div class="mb-3">
-                <label for="stock" class="form-label">Stock</label>
-                <input type="number" class="form-control" id="stock" name="stock" min="0" placeholder="Stock" required>
-            </div>
-            <div class="mb-3">
-                <label for="category" class="form-label">Categoría</label>
-                <input type="text" class="form-control" id="category" name="category" placeholder="Categoría" required>
-            </div>
-            <!-- Agrega un mensaje de error para mostrar si el código ya existe -->
-            <div id="codeErrorMessage" class="alert alert-danger" style="display: none;"></div>
-            <!-- Mensaje de error para el código -->
-            <div id="codeError" style="display: none;">
-                <p id="codeErrorMessage" style="color: red;"></p>
-            </div>
-            <button type="submit" class="btn btn-primary">Agregar Producto</button>
-        </form>
-    </section>
+        </section>
 
-    <section>
-    <h3 class="p-servicios">Ofrecemos trabajos y productos de la más alta calidad</h3>
-    <div class="padre-cards" id="liveProducts">
-        <!-- Tarjetas de productos -->
-        {{!-- Acá van a ir las tarjetas nuevas --}}
-        {{#each products}}
-        <div class="card-servicios">
-            <img src="{{this.thumbnails}}" alt="Imagen">
-            <p>{{this.title}}</p>
-            <p>Precio: {{this.price}}</p>
-            <p>Descripción: {{this.description}}</p>
-            <p>Stock: {{this.stock}}</p>
-            <!-- Botón para eliminar el producto -->
-            <button class="eliminar-producto" data-product-id="{{this._id}}">Eliminar</button>
-        </div>
-        {{/each}}
-    </div>
-    </section>
-
-    <!--Seccion de banner-->
-    <section id="banner__productosyservicios">
-
-        <h3>Seguridad informática</h3>
-
-        <div id="padre__banner" >
-            <!--Banner 1-->
-            <div class="banner__info">
-                <h4>Antivirus</h4>
-                <p>Limpieza y elimincación de virus</p>
+        <section>
+            <h3 class="p-servicios">Ofrecemos trabajos y productos de la más alta calidad</h3>
+            <div class="padre-cards" id="liveProducts">
+                <!-- Tarjetas de productos -->
+                {{!-- Acá van a ir las tarjetas nuevas --}}
+                {{#each products}}
+                <div class="card-servicios">
+                    <img src="{{this.thumbnails}}" alt="Imagen">
+                    <p>{{this.title}}</p>
+                    <p>Precio: {{this.price}}</p>
+                    <p>Descripción: {{this.description}}</p>
+                    <p>Stock: {{this.stock}}</p>
+                    <!-- Botón para eliminar el producto -->
+                    <button class="eliminar-producto" data-product-id="{{this._id}}">Eliminar</button>
+                </div>
+                {{/each}}
             </div>
+        </section>
 
-            <!--Banner 2-->
-            <div class="banner__info">
-                <h4>Recuperación de datos</h4>
-                <p>Recuperación de documentos</p>
+        <!--Seccion de banner-->
+        <section id="banner__productosyservicios">
+            <h3>Seguridad informática</h3>
+            <div id="padre__banner">
+                <!--Banner 1-->
+                <div class="banner__info">
+                    <h4>Antivirus</h4>
+                    <p>Limpieza y eliminación de virus</p>
+                </div>
+                <!--Banner 2-->
+                <div class="banner__info">
+                    <h4>Recuperación de datos</h4>
+                    <p>Recuperación de documentos</p>
+                </div>
+                <!--Banner 3-->
+                <div class="banner__info">
+                    <h4>Wannacry</h4>
+                    <p>Recuperamos archivos encriptados</p>
+                </div>
+                <!--Banner 4-->
+                <div class="banner__info">
+                    <h4>Software de seguridad</h4>
+                    <p>Antivirus de primer nivel</p>
+                </div>
             </div>
+        </section>
+    </main>
 
-            <!--Banner 3-->
-            <div class="banner__info">
-                <h4>Wannacry</h4>
-                <p>Recuperamos archivos encriptados</p>
-            </div>
+    <footer id="footer">
+        Web creada por Adrián Fernández. Todos los derechos reservados.
+    </footer>
 
-            <!--Banner 4-->
-            <div class="banner__info">
-                <h4>Software de seguridad</h4>
-                <p>Antivirus de primer nivel</p>
-            </div>
-        </div>
-    </section>
-</main>
-
-<footer id="footer">
-    Web creada por Adrián Fernández. Todos los derechos reservados.
-</footer>
-
-<script src="/socket.io/socket.io.js"></script>
-<!-- Script de Handlebars desde CDN -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
-{{!-- Link al js con Handlebars --}}
-<script src="/js/productosRealTime.js"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Script de Handlebars desde CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+    <!-- Script de tu aplicación -->
+    <script type="module" src="/js/productosRealTime.js"></script>
+</body>
+</html>

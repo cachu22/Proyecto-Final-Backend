@@ -28,22 +28,22 @@ export default class CartRepository {
     };
 
     // Agregar producto al carrito
-    add = async (cartId, productId, quantity) => {
-        const updatedCart = await this.cartDao.add(cartId, productId, quantity);
+    add = async (cartId, pid, quantity) => {
+        const updatedCart = await this.cartDao.add(cartId, pid, quantity);
         logger.info('Producto agregado al carrito en addProductToCart - src/repositories/cart.repository.js', updatedCart); // Log info
         return new CartDto(updatedCart); // Devuelve el carrito actualizado como DTO
     };
 
     // Actualizar la cantidad del producto en el carrito
-    update = async (cartId, productId, quantity) => {
-        const updatedCart = await this.cartDao.update(cartId, productId, quantity);
+    update = async (cartId, pid, quantity) => {
+        const updatedCart = await this.cartDao.update(cartId, pid, quantity);
         logger.info('Cantidad del producto actualizada en updateProductQuantity - src/repositories/cart.repository.js', updatedCart); // Log info
         return new CartDto(updatedCart); // Devuelve el carrito actualizado como DTO
     };
 
     // Eliminar producto del carrito
-    remove = async (cartId, productId) => {
-        const updatedCart = await this.cartDao.remove(cartId, productId);
+    remove = async (cartId, pid) => {
+        const updatedCart = await this.cartDao.remove(cartId, pid);
         logger.info('Producto eliminado del carrito en removeProductFromCart - src/repositories/cart.repository.js', updatedCart); // Log info
         return new CartDto(updatedCart); // Devuelve el carrito actualizado como DTO
     };

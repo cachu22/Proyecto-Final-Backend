@@ -88,9 +88,9 @@ class ProductDaosMongo {
     }
 
     // Actualizar un producto existente
-    async update(productId, updatedFields) {
+    async update(pid, updatedFields) {
         try {
-            const updatedProduct = await this.productModel.findByIdAndUpdate(productId, updatedFields, { new: true });
+            const updatedProduct = await this.productModel.findByIdAndUpdate(pid, updatedFields, { new: true });
             logger.info('Producto actualizado con éxito - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js:', updatedProduct);
             return updatedProduct;
         } catch (error) {
@@ -100,9 +100,16 @@ class ProductDaosMongo {
     }
 
     // Eliminar un producto
-    async delete(productId) {
+    async delete(pid) {
         try {
-            const deletedProduct = await this.productModel.findByIdAndDelete(productId);
+            console.log(`Intentando eliminar producto con ID: ${pid}`);
+            const deletedProduct = await this.productModel.findByIdAndDelete(pid);
+            
+            if (!deletedProduct) {
+                console.log(`No se encontró el producto con ID: ${pid}`);
+                throw new Error('Producto no encontrado');
+            }
+    
             logger.info('Producto eliminado con éxito - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js:', deletedProduct);
             return deletedProduct;
         } catch (error) {
@@ -110,6 +117,7 @@ class ProductDaosMongo {
             throw new Error('Error al eliminar el producto: ' + error.message);
         }
     }
+    
 }
 
 export default ProductDaosMongo;

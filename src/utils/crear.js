@@ -32,11 +32,11 @@ export function handleAddProduct(req, res, next) {
         }
 
         // Genera un nuevo ID único para el producto usando el gestor
-        const newProductId = manager.generateUniqueId(updatedProducts);
+        const pid = manager.generateUniqueId(updatedProducts);
 
         // Crea el nuevo producto con los datos proporcionados
         const newProduct = {
-            id: newProductId,
+            id: newpid,
             status: productData.status,
             title: productData.title,
             description: productData.description,

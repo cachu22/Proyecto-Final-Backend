@@ -7,6 +7,7 @@ import { adminOrUserAuth, adminAuth, authenticateToken, authenticateUser, author
 import { ProductService, userService } from "../service/index.js";
 import { logger } from "../utils/logger.js";
 import { CartService } from "../service/index.js";
+import ProductController from "../controllers/product.controller.js";
 
 // Cargar los datos de productos localfile
 const productsData = JSON.parse(fs.readFileSync(__dirname + '/file/products.json', 'utf-8'));
@@ -144,10 +145,12 @@ viewsRouter.get('/gestionDeUsuarios', (req, res, next) => {
 //     res.render('realTimeProducts', { products: productsData });
 //     logger.info('Página de productos en tiempo real renderizada - src/Routes/views.router.js', { products: productsData });
 // });
+const productController = new ProductController()
 
 viewsRouter.get('/realtimeproducts', adminOrUserAuth, async (req, res) => {
     try {
-        const products = await ProductService.getAll();
+
+        const products = await productController.getAll();
         const plainProducts = products.map(product => product.toObject()); // Convertir a objetos simples
         res.render('realTimeProducts', { products: plainProducts });
         logger.info('Página de productos en tiempo real renderizada - src/Routes/views.router.js', { products: plainProducts });

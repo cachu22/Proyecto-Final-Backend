@@ -51,8 +51,8 @@ mgProducts.put('/:pid', validateProductParams, authenticateToken, authenticateUs
 // mgProducts.delete('/:pid', validateProductParams, authenticateToken, authenticateUser, authorizeRoles, deleteDate);
 
 //verificacion de parametros
-mgProducts.delete('/:id', authenticateToken, authenticateUser, authorizeRoles, (req, res, next) => {
-    console.log('Parámetros de la solicitud:', req.params);
+mgProducts.delete('/:pid', authenticateToken, authenticateUser, authorizeRoles, (req, res, next) => {
+    console.log('Parámetros de la solicitud en el productsRouterDB.js:', req.params); 
     next();
 }, deleteDate);
 

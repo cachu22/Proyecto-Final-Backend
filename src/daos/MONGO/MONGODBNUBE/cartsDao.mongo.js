@@ -52,7 +52,7 @@ class CartDaoMongo {
         }
     }
 
-    async add(cartId, productId, quantity) {
+    async add(cartId, pid, quantity) {
         try {
             // Verificar si el carrito existe
             const cart = await this.model.findById(cartId);
@@ -63,7 +63,7 @@ class CartDaoMongo {
 
             // Verificar si el producto ya está en el carrito
             const productIndex = cart.products.findIndex(
-                (p) => p.product.toString() === productId.toString()
+                (p) => p.product.toString() === pid.toString()
             );
 
             if (productIndex !== -1) {
@@ -71,7 +71,7 @@ class CartDaoMongo {
                 cart.products[productIndex].quantity += quantity;
             } else {
                 // Si el producto no está en el carrito, agregarlo
-                cart.products.push({ product: productId, quantity });
+                cart.products.push({ product: pid, quantity });
             }
 
             // Guardar los cambios en el carrito
@@ -84,7 +84,7 @@ class CartDaoMongo {
         }
     }
 
-    async update(cartId, productId, quantity) {
+    async update(cartId, pid, quantity) {
         try {
             logger.info(`Buscando el carrito con ID - Log de /src/daos/MONGO/MONGODBNUBE/cartsDao.mongo.js: ${cartId}`);
             const cart = await this.model.findById(cartId);
@@ -93,12 +93,12 @@ class CartDaoMongo {
                 throw new Error('El carrito no existe');
             }
 
-            logger.info(`Buscando el producto con ID - Log de /src/daos/MONGO/MONGODBNUBE/cartsDao.mongo.js: ${productId} en el carrito`);
+            logger.info(`Buscando el producto con ID - Log de /src/daos/MONGO/MONGODBNUBE/cartsDao.mongo.js: ${pid} en el carrito`);
             const product = cart.products.find(item => 
-                new mongoose.Types.ObjectId(item.product).equals(new mongoose.Types.ObjectId(productId))
+                new mongoose.Types.ObjectId(item.product).equals(new mongoose.Types.ObjectId(pid))
             );
             if (!product) {
-                logger.error('El producto no está en el carrito con ID - Log de /src/daos/MONGO/MONGODBNUBE/cartsDao.mongo.js:', productId);
+                logger.error('El producto no está en el carrito con ID - Log de /src/daos/MONGO/MONGODBNUBE/cartsDao.mongo.js:', pid);
                 throw new Error('El producto no está en el carrito');
             }
 
@@ -112,7 +112,7 @@ class CartDaoMongo {
         }
     }
 
-    async remove(cartId, productId) {
+    async remove(cartId, pid) {
         try {
             const cart = await this.model.findById(cartId).populate('products.product');
             if (!cart) {
@@ -120,9 +120,9 @@ class CartDaoMongo {
                 throw new Error('El carrito no existe');
             }
 
-            const productIndex = cart.products.findIndex(item => item.product._id.toString() === productId);
+            const productIndex = cart.products.findIndex(item => item.product._id.toString() === pid);
             if (productIndex === -1) {
-                logger.error('El producto no está en el carrito con ID - Log de /src/daos/MONGO/MONGODBNUBE/cartsDao.mongo.js:', productId);
+                logger.error('El producto no está en el carrito con ID - Log de /src/daos/MONGO/MONGODBNUBE/cartsDao.mongo.js:', pid);
                 throw new Error('El producto no está en el carrito');
             }
 

@@ -56,11 +56,11 @@ class ProductDaoFS {
     }
 
     // Generar un ID único automáticamente
-    const newProductId = this.generateUniqueId(products);
+    const newpid = this.generateUniqueId(products);
 
     // Establecer status por defecto y asegurarse de que thumbnails sea un array
     const newProduct = {
-      id: newProductId, // Utiliza el nuevo ID generado automáticamente
+      id: newpid, // Utiliza el nuevo ID generado automáticamente
       status: true, // Status es true por defecto
       thumbnails: [], // Inicializa thumbnails como un array vacío
       ...product
@@ -99,15 +99,15 @@ class ProductDaoFS {
   }
 
   // Método para obtener un producto por su ID
-  getProductById(productId) {
+  getProductById(pid) {
     const products = this.getProductsFromFile(); // Obtiene la lista de productos desde el archivo
-    return products.find(product => product.id === productId); // Busca y retorna el producto con el ID especificado
+    return products.find(product => product.id === pid); // Busca y retorna el producto con el ID especificado
   }
 
   // Método para actualizar un producto
-  updateProduct(productId, updatedFields) {
+  updateProduct(pid, updatedFields) {
     const products = this.getProductsFromFile(); // Obtiene la lista de productos desde el archivo
-    const index = products.findIndex(product => product.id === productId); // Encuentra el índice del producto con el ID especificado
+    const index = products.findIndex(product => product.id === pid); // Encuentra el índice del producto con el ID especificado
     if (index !== -1) { // Si se encuentra el producto
       // Excluye la propiedad 'id' del objeto updatedFields para evitar que se actualice
       const { id, ...fieldsToUpdate } = updatedFields;
@@ -120,9 +120,9 @@ class ProductDaoFS {
   }
 
   // Método para eliminar un producto
-  deleteProduct(productId) {
+  deleteProduct(pid) {
     let products = this.getProductsFromFile(); // Obtiene la lista de productos desde el archivo
-    products = products.filter(product => product.id !== productId); // Filtra los productos para eliminar el producto con el ID especificado
+    products = products.filter(product => product.id !== pid); // Filtra los productos para eliminar el producto con el ID especificado
     this.saveProductsToFile(products); // Guarda la lista de productos actualizada en el archivo
   }
 

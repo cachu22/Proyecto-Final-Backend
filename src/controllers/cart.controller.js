@@ -89,7 +89,7 @@ class CartController {
                 const errorMessage = `El ID del producto no es válido: ${pid}`;
                 logger.error('Log de /src/controllers/cart.controller.js9', errorMessage);
                 throw CustomError.createError({
-                    name: 'InvalidProductIdError',
+                    name: 'InvalidpidError',
                     cause: new Error(errorMessage),
                     message: addProductToCartError(pid, cid, errorMessage),
                     code: CART_ERROR_CODE
@@ -224,13 +224,13 @@ class CartController {
                 const product = await productService.getOne(item.product._id);
                 if (!product || product.stock < item.quantity) {
                     outOfStockProducts.push({
-                        productId: item.product._id,
+                        pid: item.product._id,
                         required: item.quantity,
                         available: product ? product.stock : 0
                     });
                 } else {
                     productsToUpdate.push({
-                        productId: item.product._id,
+                        pid: item.product._id,
                         quantity: item.quantity
                     });
                 }
@@ -262,8 +262,8 @@ class CartController {
             });
     
             // Actualizar el stock de los productos
-            for (const { productId, quantity } of productsToUpdate) {
-                await productService.updateStock(productId, -quantity);
+            for (const { pid, quantity } of productsToUpdate) {
+                await productService.updateStock(pid, -quantity);
             }
     
             // Vaciar el carrito después de la compra

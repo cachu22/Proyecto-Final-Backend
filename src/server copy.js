@@ -24,9 +24,7 @@ import viewsRouter from './Routes/views.router.js';
 import clientMensajeria from './Routes/api/clientMessage.js';
 import jwt from 'jsonwebtoken';
 import { saveMessage } from './controllers/messajecontroller.js';
-import ProductController from './controllers/product.controller.js';
-
-const productController = new ProductController();
+import {create, deleteDate } from './controllers/product.controller.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,10 +35,10 @@ const cartData = JSON.parse(fs.readFileSync(__dirname + '/file/carts.json', 'utf
 
 const app = express();
 const httpServer = http.createServer(app);
-export const io = new Server(httpServer, {
+const io = new Server(httpServer, {
     cors: {
-        origin: ['http://localhost:8000', 'http://127.0.0.1:8000'],
-        methods: ['GET', 'POST', 'DELETE'],
+        origin: 'http://localhost:8000',
+        methods: ['GET', 'POST'],
         credentials: true
     }
 });
@@ -194,8 +192,13 @@ io.on('connection', (socket) => {
 
     // Manejo de productos
     socket.on('addProduct', (productData) => {
-        productController.create(productData, manager, io);
-        console.log('datos recibidos desde el cliente', productData);
+        ProductController.create(productData, manager, io);
+        logger.info('Datos recibidos desde el cliente - /server.js', productData);
+    });
+
+    socket.on('eliminarProducto', (productId) => {
+        ProductController.deleteData(productId, manager, io);
+        logger.info('Producto eliminado - /server.js:', productId);
     });
 
     // Manejo de desconexión
@@ -220,6 +223,12 @@ logger.info("Servidor inicializado - /server.js");
 app.use((err, req, res, next) => {
     console.error('Error manejado por el manejador de errores:', err);
     res.status(500).json({ status: 'error', message: err.message });
+});
+
+// Middleware para manejo de errores
+app.use((err, req, res, next) => {
+    logger.error(`Error: ${err.message} - Log de /src/middlewares/errors/index.js`);
+    res.status(err.status || 500).json({ status: 'error', message: err.message });
 });
 
 getServer();

@@ -76,7 +76,7 @@ PUT http://127.0.0.1:8080/api/cartsDB/664be577fa72a1055ac0ab59/
 Content-Type: application/json
 
 {
-	"productId": "664b6d06e6befaceea103874",
+	"pid": "664b6d06e6befaceea103874",
 	"quantity": 1
 }
 

@@ -6,6 +6,7 @@ import { generateProducts } from "../utils/generateProductsMock.js";
 import { logger } from "../utils/logger.js";
 import { userModel } from "../daos/MONGO/models/users.models.js";
 import mongoose from "mongoose";
+import { io } from "../server.js";
 
 class ProductController {
     constructor() {
@@ -23,13 +24,14 @@ class ProductController {
     }
 
     // Obtener todos los productos
-    getAll = async (req, res) => {
+    async getAll(req, res) {
         try {
             const products = await this.productService.getAll();
-            res.send({ status: 'success', payload: products });
+            // Retornar los productos en lugar de enviar una respuesta JSON
+            return products; 
         } catch (error) {
             logger.error('Error al obtener todos los productos - Log de /src/controllers/product.controller.js:', error);
-            res.status(500).send({ status: 'error', message: 'Error al obtener todos los productos' });
+            throw new Error('Error al obtener todos los productos');
         }
     }
 
@@ -73,11 +75,11 @@ class ProductController {
     // Obtener producto por ID
     getOne = async (req, res) => {
         try {
-            const productId = req.params.pid;
-            if (!mongoose.Types.ObjectId.isValid(productId)) {
+            const pid = req.params.pid;
+            if (!mongoose.Types.ObjectId.isValid(pid)) {
                 return res.status(400).json({ status: 'error', message: 'ID Erroneo' });
             }
-            const product = await this.productService.getOne(productId);
+            const product = await this.productService.getOne(pid);
             if (!product) {
                 return res.status(404).json({ status: 'error', message: 'Product not found' });
             }
@@ -131,42 +133,29 @@ class ProductController {
         }
     };
 
-    // Método asíncrono para manejar la creación de un nuevo producto
     create = async (req, res) => {
         try {
-            // Extrae los datos del producto del cuerpo de la solicitud
             const { title, model, description, price, code, thumbnails, stock, category } = req.body;
-    
-            // Verifica si todos los campos necesarios están presentes
+
             if (!title || !model || !description || !price || !thumbnails || !code || !stock || !category) {
-                // Registra un error en la consola si faltan datos
                 console.error('Error al crear el producto - Faltan datos para crear el producto');
-                // Responde con un error 400 (Bad Request) y un mensaje de error
                 return res.status(400).json({ status: 'error', message: 'Faltan datos para crear el producto' });
             }
-    
-            // Obtiene el ID y el rol del usuario desde la solicitud autenticada
+
             const userId = req.user?._id;
             const userRole = req.user?.role;
 
-            console.log('ID del usuario:', userId);
-            console.log('Rol del usuario:', userRole);
-    
-            // Verifica si el ID del usuario está presente (es decir, si el usuario está autenticado)
             if (!userId) {
-                // Responde con un error 401 (Unauthorized) y un mensaje de error si el usuario no está autenticado
                 return res.status(401).json({ status: 'error', message: 'Usuario no autenticado' });
             }
-    
-            // Inicializa el campo 'owner' según el rol del usuario
+
             let owner;
             if (userRole === 'premium' || userRole === 'admin') {
-                owner = userId; // Usa el ID del usuario tanto para 'premium' como para 'admin'
+                owner = userId;
             } else {
                 return res.status(403).json({ status: 'error', message: 'Rol de usuario no autorizado para crear productos' });
             }
-    
-            // Crea un objeto de nuevo producto con los datos proporcionados y el campo 'owner' determinado
+
             const newProduct = {
                 title,
                 model,
@@ -178,16 +167,19 @@ class ProductController {
                 category,
                 owner
             };
-    
-            // Llama al servicio de productos para crear el nuevo producto en la base de datos
-            const result = await this.productService.create(newProduct);
-    
-            // Responde con un estado 201 (Created) y el producto creado en el payload
-            res.status(201).json({ status: 'success', payload: newProduct });
+
+            const createdProduct = await this.productService.create(newProduct);
+
+            if (this.io) { // Asegúrate de que this.io esté definido
+                this.io.emit('productAdded', newProduct);
+            } else {
+                console.error('WebSocket io no está definido.');
+            }
+
+            res.status(201).json({ status: 'success', payload: createdProduct });
+
         } catch (error) {
-            // Registra un mensaje de error en la consola si ocurre una excepción
             console.error('Error al crear el producto:', error);
-            // Responde con un estado 500 (Internal Server Error) y un mensaje de error
             res.status(500).json({ status: 'error', message: 'Error al agregar el producto', error: error.message });
         }
     };
@@ -206,21 +198,63 @@ class ProductController {
     };
 
     // Eliminar un producto
+    // deleteDate = async (req, res) => {
+    //     try {
+    //         const productId = req.params.id;
+    //         const userId = req.user?._id;
+    //         const userRole = req.user?.role;
+    
+    //         if (!userId) {
+    //             return res.status(401).json({ status: 'error', message: 'Usuario no autenticado' });
+    //         }
+            
+    //         const product = await this.productService.getOne(productId);
+    
+    //         if (!product) {
+    //             return res.status(404).json({ status: 'error', message: 'Producto no encontrado' });
+    //         }
+    
+    //         if (!product.owner) {
+    //             return res.status(500).json({ status: 'error', message: 'Error interno del servidor: Owner del producto no encontrado' });
+    //         }
+    
+    //         if (userRole === 'admin' || (userRole === 'premium' && product.owner.toString() === userId.toString())) {
+    //             await this.productService.delete(productId);
+    //             // Emitir evento a todos los clientes
+    //             io.emit('eliminarProducto', productId);
+    //             // También podrías emitir todos los productos actualizados
+    //             const updatedProducts = await this.productService.getAll();
+    //             io.emit('productosActualizados', updatedProducts);
+    //             return res.status(200).json({ status: 'success', message: 'Producto eliminado correctamente' });
+    //         }
+    
+    //         return res.status(403).json({ status: 'error', message: 'No tiene permisos para eliminar este producto' });
+    //     } catch (error) {
+    //         console.error('Error al eliminar el producto - Log de /src/controllers/product.controller.js:', error);
+    //         return res.status(500).json({ status: 'error', message: 'Error al eliminar el producto', error: error.message });
+    //     }
+    // };
     deleteDate = async (req, res) => {
         try {
-            const productId = req.params.id;
+            console.log('Parámetros recibidos en deleteDate del controller:', req.params); // Añadir este log
+            const { pid } = req.params;
+            console.log('PID recibido:', pid); // Verificar si el PID está siendo recibido correctamente
+    
+            if (!pid) {
+                return res.status(400).json({ status: 'error', message: 'Product ID is required' });
+            }
+    
             const userId = req.user?._id;
             const userRole = req.user?.role;
-    
-            console.log('ID del producto recibido:', productId);
-            console.log('ID del usuario:', userId);
-            console.log('Rol del usuario:', userRole);
+            console.log('User ID:', userId); // Verificar ID del usuario
+            console.log('User Role:', userRole); // Verificar rol del usuario
     
             if (!userId) {
                 return res.status(401).json({ status: 'error', message: 'Usuario no autenticado' });
             }
-            
-            const product = await this.productService.getOne(productId);
+    
+            const product = await this.productService.getOne(pid);
+            console.log('Producto encontrado:', product); // Verificar producto encontrado
     
             if (!product) {
                 return res.status(404).json({ status: 'error', message: 'Producto no encontrado' });
@@ -231,7 +265,10 @@ class ProductController {
             }
     
             if (userRole === 'admin' || (userRole === 'premium' && product.owner.toString() === userId.toString())) {
-                await this.productService.delete(productId);
+                await this.productService.delete(pid);
+                io.emit('eliminarProducto', pid);
+                const updatedProducts = await this.productService.getAll();
+                io.emit('productosActualizados', updatedProducts);
                 return res.status(200).json({ status: 'success', message: 'Producto eliminado correctamente' });
             }
     

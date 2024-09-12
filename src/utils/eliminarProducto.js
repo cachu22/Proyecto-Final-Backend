@@ -1,12 +1,12 @@
 import { logger } from "./logger.js";
 
 // Función para eliminar un producto
-export function deleteProduct(productId, manager, io) {
+export function deleteProduct(pid, manager, io) {
     try {
-        logger.info('Intentando eliminar el producto con ID - src/utils/eliminarProducto.js:', productId); // Log de inicio de eliminación
+        logger.info('Intentando eliminar el producto con ID - src/utils/eliminarProducto.js:', pid); // Log de inicio de eliminación
 
-        // Llama a la función deleteProduct del productManager y pasa el productId
-        manager.deleteProduct(productId);
+        // Llama a la función deleteProduct del productManager y pasa el pid
+        manager.deleteProduct(pid);
 
         // Después de eliminar el producto, cargar la lista de productos actualizada
         const updatedProducts = manager.getProducts();
@@ -19,6 +19,6 @@ export function deleteProduct(productId, manager, io) {
     } catch (error) {
         logger.error('Error al eliminar el producto - src/utils/eliminarProducto.js:', error); // Log de error
         // Si hay un error, puedes emitir un evento de error al cliente para manejarlo en el frontend
-        io.emit('eliminarProductoError', { productId, error: error.message });
+        io.emit('eliminarProductoError', { pid, error: error.message });
     }
 }

@@ -4,6 +4,8 @@ import { userService } from '../src/service/index.js'
 import { app } from '../src/server.js';
 import FormData from 'form-data';
 import { Should } from 'chai';
+import path from 'path';
+import { __dirname } from '../src/utils/utils.js';
 
 request(app)
 
@@ -298,6 +300,53 @@ let token;
 
 //Para test
 
+
+//Test para generacion de usuario "user" y login de admin para cambio de rol del usuario generado
+// describe('Test avanzado de sesión y cambio de rol', function() {
+//     let userToken;
+//     let adminToken;
+//     let userId;
+
+//     before(async function() {
+//         // Registra un nuevo usuario
+//         const userResponse = await request(app)
+//             .post('/api/sessions/register')
+//             .send({
+//                 first_name: 'test',
+//                 last_name: 'deRol',
+//                 email: 'testRol@test.com',
+//                 password: 'asd',
+//                 age: 36,
+//                 role: 'user'
+//             });
+//         userToken = userResponse.body.token;
+//         userId = userResponse.body.userId;
+
+//         // Inicia sesión para obtener el token de admin
+//         const adminResponse = await request(app)
+//             .post('/api/sessions/login')
+//             .send({
+//                 email: 'asd@asd.com',
+//                 password: 'asd'
+//             });
+//         adminToken = adminResponse.body.token;
+//     });
+
+//     it('Debería permitir al admin cambiar el rol del usuario de "user" a "premium"', function(done) {
+//         request(app)
+//             .put(`/api/usersDB/premium/${userId}`)
+//             .set('Authorization', `Bearer ${adminToken}`)
+//             .send({ role: 'premium' }) // No se envían archivos
+//             .expect(200)
+//             .end((err, res) => {
+//                 if (err) return done(err);
+//                 // Verifica que el rol se haya cambiado exitosamente
+//                 expect(res.body.message).to.include('Rol de usuario actualizado');
+//                 done();
+//             });
+//     });
+// });
+
 describe('Test avanzado de sesión y cambio de rol', function() {
     let userToken;
     let adminToken;
@@ -328,15 +377,19 @@ describe('Test avanzado de sesión y cambio de rol', function() {
         adminToken = adminResponse.body.token;
     });
 
-    it('Debería permitir al admin cambiar el rol del usuario de "user" a "premium"', function(done) {
+    it('Debería permitir al admin cambiar el rol del usuario de "user" a "premium" si se suben los documentos correctos', function(done) {
         request(app)
             .put(`/api/usersDB/premium/${userId}`)
             .set('Authorization', `Bearer ${adminToken}`)
-            .send({ role: 'premium' }) // No se envían archivos
+            .attach('document', path.resolve(__dirname, '../test/path/to/identificacion.pdf')) // Simular subida de archivo de identificación
+            .attach('document', path.resolve(__dirname, '../test/path/to/comprobante_domicilio.pdf')) // Simular subida de comprobante de domicilio
+            .attach('document', path.resolve(__dirname, '../test/path/to/comprobante_estado_cuenta.pdf'))
             .expect(200)
             .end((err, res) => {
-                if (err) return done(err);
-                // Verifica que el rol se haya cambiado exitosamente
+                if (err) {
+                    console.log(res.body); // Ver el mensaje de error
+                    return done(err);
+                }
                 expect(res.body.message).to.include('Rol de usuario actualizado');
                 done();
             });
