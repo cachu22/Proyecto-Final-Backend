@@ -1875,3 +1875,30 @@ Use mongoose.model(name, schema) {"stack":"Error: Error al obtener el carrito po
 [31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-09-12T01:09:52.373Z"}
 [31merror[39m: El código de producto ya está en uso - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-09-12T01:12:39.029Z"}
 [31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-09-12T01:12:39.031Z"}
+[31merror[39m: El carrito no se encontró con ID - Log de /src/daos/MONGO/MONGODBNUBE/cartsDao.mongo.js: {"timestamp":"2024-09-12T07:24:53.989Z"}
+[31merror[39m: Error al obtener el carrito por ID - Log de /src/daos/MONGO/MONGODBNUBE/cartsDao.mongo.js: {"timestamp":"2024-09-12T07:24:53.991Z"}
+[31merror[39m: Error al obtener el carrito - src/Routes/views.router.js {"error":{},"timestamp":"2024-09-12T07:24:53.993Z"}
+[33mwarning[39m: Acceso denegado: usuario no es premium - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-09-12T08:02:20.950Z"}
+[33mwarning[39m: Acceso denegado: usuario no es admin - Log de src/Routes/views.router.js {"timestamp":"2024-09-12T08:04:29.948Z"}
+[33mwarning[39m: Acceso denegado: usuario no es premium - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-09-12T08:12:50.515Z"}
+[33mwarning[39m: Acceso denegado: usuario no es premium - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-09-12T08:12:51.709Z"}
+[33mwarning[39m: Acceso denegado: usuario no es premium - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-09-12T08:12:53.486Z"}
+[33mwarning[39m: Acceso denegado: usuario no es premium - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-09-12T08:12:53.869Z"}
+[33mwarning[39m: Acceso denegado: usuario no es premium - Log de /src/middlewares/Auth.middleware.js {"timestamp":"2024-09-12T08:12:54.022Z"}
+[31merror[39m: Error al actualizar el rol de usuario: No se han subido documentos. - Log de /src/controllers/user.controller.js {"timestamp":"2024-09-12T11:56:10.700Z"}
+[33mwarning[39m: Acceso denegado: usuario no es admin - Log de src/Routes/views.router.js {"timestamp":"2024-09-12T12:07:13.475Z"}
+[33mwarning[39m: Acceso denegado: usuario no es admin - Log de src/Routes/views.router.js {"timestamp":"2024-09-12T12:07:20.735Z"}
+[31merror[39m: Log de /src/controllers/cart.controller.js13 {"timestamp":"2024-09-12T12:13:36.275Z"}
+[31merror[39m: Log de /src/controllers/cart.controller.js13 {"timestamp":"2024-09-12T12:13:39.576Z"}
+[31merror[39m: Log de /src/controllers/cart.controller.js13 {"timestamp":"2024-09-12T12:13:43.140Z"}
+[33mwarning[39m: Acceso denegado: usuario no es admin - Log de src/Routes/views.router.js {"timestamp":"2024-09-12T12:21:02.515Z"}
+[33mwarning[39m: Acceso denegado: usuario no es admin - Log de src/Routes/views.router.js {"timestamp":"2024-09-12T12:21:02.733Z"}
+[31merror[39m: Error al obtener el carrito por ID - Log de /src/daos/MONGO/MONGODBNUBE/cartsDao.mongo.js: {"timestamp":"2024-09-12T12:25:24.532Z"}
+[31merror[39m: Error al obtener el carrito - src/Routes/views.router.js {"error":{},"timestamp":"2024-09-12T12:25:24.534Z"}
+[31merror[39m: Error al obtener el carrito por ID - Log de /src/daos/MONGO/MONGODBNUBE/cartsDao.mongo.js: {"timestamp":"2024-09-12T12:43:28.348Z"}
+[31merror[39m: Error al obtener el carrito - src/Routes/views.router.js {"error":{},"timestamp":"2024-09-12T12:43:28.350Z"}
+[31merror[39m: Error al obtener el carrito por ID - Log de /src/daos/MONGO/MONGODBNUBE/cartsDao.mongo.js: {"timestamp":"2024-09-12T12:43:52.658Z"}
+[31merror[39m: Error al obtener el carrito - src/Routes/views.router.js {"error":{},"timestamp":"2024-09-12T12:43:52.659Z"}
+[31merror[39m: Error al obtener el carrito por ID - Log de /src/daos/MONGO/MONGODBNUBE/cartsDao.mongo.js: {"timestamp":"2024-09-12T12:45:23.770Z"}
+[31merror[39m: Error al obtener el carrito - src/Routes/views.router.js {"error":{},"timestamp":"2024-09-12T12:45:23.772Z"}
+[31merror[39m: Error al obtener el carrito - src/Routes/views.router.js {"error":{},"timestamp":"2024-09-12T13:07:52.522Z"}

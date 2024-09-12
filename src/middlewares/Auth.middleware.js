@@ -196,31 +196,19 @@ export const authenticateUser = async (req, res, next) => {
     }
 };
 
-// export const authorizeRoles = (req, res, next) => {
-//     if (typeof res.status !== 'function') {
-//         console.error('res no es un objeto de respuesta de Express');
-//         return next(new Error('Invalid response object'));
-//     }
-
-//     const userRole = req.user && req.user.role;
-//     if (!userRole || (userRole !== 'admin' && userRole !== 'premium')) {
-//         console.error('Error en authorizeRoles:', req.user);
-//         return res.status(403).json({ status: 'error', message: 'No tiene permisos para realizar esta acción' });
-//     }
-
-//     console.log('Rol del usuario autorizado:', userRole);
-//     next();
-// };
-
 export const authorizeRoles = (req, res, next) => {
-    console.log('Autorizando roles authorizeRoles...');
-    console.log('Parámetros antes de autorización authorizeRoles:', req.params);
+    if (typeof res.status !== 'function') {
+        console.error('res no es un objeto de respuesta de Express');
+        return next(new Error('Invalid response object'));
+    }
+
     const userRole = req.user && req.user.role;
     if (!userRole || (userRole !== 'admin' && userRole !== 'premium')) {
+        console.error('Error en authorizeRoles:', req.user);
         return res.status(403).json({ status: 'error', message: 'No tiene permisos para realizar esta acción' });
     }
 
-    console.log('Rol del usuario autorizado:', userRole); // Añadido para depuración
+    console.log('Rol del usuario autorizado:', userRole);
     next();
 };
 

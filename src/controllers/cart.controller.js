@@ -269,7 +269,16 @@ class CartController {
             // Vaciar el carrito después de la compra
             await cartService.deleteDate(cid);
     
-            res.status(200).json({ message: 'Compra realizada con éxito', ticket });
+            // Enviar la respuesta al frontend
+            res.status(200).json({
+                message: 'Compra realizada con éxito',
+                ticket: {
+                    code: ticket.code,
+                    amount: ticket.amount,
+                    purchase_datetime: ticket.purchase_datetime,
+                    purchaser: ticket.purchaser
+                }
+            });
         } catch (error) {
             console.error('Error en purchase:', error);
             res.status(500).json({ message: 'Error al realizar la compra', error: error.message });

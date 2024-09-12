@@ -52,12 +52,17 @@
             <h3>Bienvenido {{first_name}} {{last_name}}!</h3>
             <h4>Nos alegra verte de nuevo.</h4>
             <a href="/api/sessions/logout"><h5>Cerrar sesión</h5></a>
+            <a href="/current"><h5>Mis datos</h5></a>
+            <a id="cartLink" href="#">Mi Carrito</a>
+            
             {{#if isAdmin}}
-                <a href="/GestionProductos">Gestión de productos</a>
+                <a href="/realTimeProducts">Gestión de productos</a>
                 <a href="/gestionDeUsuarios">Gestión de usuarios</a>
+                <a href="/datosDeUsuarios">Datos de todos los usuarios</a>
+                
             {{/if}}
             {{#if isPremium}}
-                <a href="/GestionProductos">Gestión de productos</a>
+                <a href="/realTimeProducts">Gestión de productos</a>
             {{/if}}
         {{else}}
             <h4 class="p-servicios">Ofrecemos trabajos y productos de la más alta calidad</h4>

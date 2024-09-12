@@ -21,19 +21,22 @@ const manager = new CartDaoMongo();
 viewsRouter.get('/', async (req, res) => {
     const { numPage, limit } = req.query;
     try {
+        // Obtener productos
         const { docs, page, hasPrevPage, hasNextPage, prevPage, nextPage } = await ProductService.getAll({ limit, numPage });
 
+        // Obtener información del usuario desde la sesión
         const user = req.session.user || {};
-        console.log('User from session:', user); // Depurar la información del usuario
-
         const isAdmin = user.role === 'admin';
         const isPremium = user.role === 'premium';
         const isAdminOrPremium = isAdmin || isPremium;
 
-        console.log('isAdmin:', isAdmin); // Para depuración
-        console.log('isPremium:', isPremium); // Para depuración
-        console.log('isAdminOrPremium:', isAdminOrPremium); // Para depuración
+        // Obtener el carrito del usuario actual si ha iniciado sesión
+        let cart = null;
+        if (user._id) {
+            cart = await CartService.getOne(user._id);
+        }
 
+        // Renderizar la vista pasando el carrito y los productos
         res.render('home', {
             products: docs,
             page,
@@ -45,7 +48,8 @@ viewsRouter.get('/', async (req, res) => {
             last_name: user.last_name || '',
             isAdmin,
             isPremium,
-            isAdminOrPremium
+            isAdminOrPremium,
+            cart // Pasamos el carrito a la vista
         });
 
         logger.info('Página principal renderizada con productos - src/Routes/views.router.js', { products: docs });
@@ -137,6 +141,20 @@ viewsRouter.get('/gestionDeUsuarios', (req, res, next) => {
     }
 }, (req, res) => {
     res.render('gestionDeUsuarios');
+    logger.info('Página de gestión de usuarios renderizada para el usuario - src/Routes/views.router.js', { user: req.session.user });
+});
+
+// Ruta para ver los datos de los usuarios
+viewsRouter.get('/datosDeUsuarios', (req, res, next) => {
+    if (req.session?.user?.role === 'admin') {
+        logger.info('Acceso permitido: usuario es admin - Log de src/Routes/views.router.js');
+        next(); // Permitir acceso si es admin
+    } else {
+        logger.warning('Acceso denegado: usuario no es admin - Log de src/Routes/views.router.js');
+        res.status(401).send('Acceso no autorizado');
+    }
+}, (req, res) => {
+    res.render('datosDeUsuarios');
     logger.info('Página de gestión de usuarios renderizada para el usuario - src/Routes/views.router.js', { user: req.session.user });
 });
 

@@ -193,3 +193,19 @@ $.ajax({
         console.error('Error al obtener la configuración del puerto - Log de /src/Public/js/producto.js:', textStatus, errorThrown);
     }
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Verificar si existe el cartId en localStorage
+    const cartId = localStorage.getItem('cartId');
+    
+    if (cartId) {
+        // Actualizar el href del enlace con el ID del carrito
+        document.getElementById('cartLink').setAttribute('href', `/cart/${cartId}`);
+    } else {
+        // Si no hay carrito, deshabilitar el enlace o mostrar un mensaje
+        document.getElementById('cartLink').addEventListener('click', function(event) {
+            event.preventDefault();
+            Swal.fire('No tienes un carrito creado todavía.');
+        });
+    }
+});
