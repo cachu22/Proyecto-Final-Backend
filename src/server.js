@@ -26,8 +26,6 @@ import jwt from 'jsonwebtoken';
 import { saveMessage } from './controllers/messajecontroller.js';
 import ProductController from './controllers/product.controller.js';
 
-const productController = new ProductController();
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -44,6 +42,8 @@ export const io = new Server(httpServer, {
         credentials: true
     }
 });
+
+const productController = new ProductController(io);
 
 const { port } = objectConfig;
 
@@ -192,10 +192,8 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Manejo de productos
-    socket.on('addProduct', (productData) => {
-        productController.create(productData, manager, io);
-        console.log('datos recibidos desde el cliente', productData);
+    socket.on('productAdded', (product) => {
+        console.log('Producto agregado:', product);
     });
 
     // Manejo de desconexión

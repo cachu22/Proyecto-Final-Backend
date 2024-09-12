@@ -136,26 +136,29 @@ class ProductController {
     create = async (req, res) => {
         try {
             const { title, model, description, price, code, thumbnails, stock, category } = req.body;
-
+    
+            // Verificación de campos obligatorios
             if (!title || !model || !description || !price || !thumbnails || !code || !stock || !category) {
                 console.error('Error al crear el producto - Faltan datos para crear el producto');
                 return res.status(400).json({ status: 'error', message: 'Faltan datos para crear el producto' });
             }
-
+    
             const userId = req.user?._id;
             const userRole = req.user?.role;
-
+    
+            // Verificación de autenticación y permisos
             if (!userId) {
                 return res.status(401).json({ status: 'error', message: 'Usuario no autenticado' });
             }
-
+    
             let owner;
             if (userRole === 'premium' || userRole === 'admin') {
                 owner = userId;
             } else {
                 return res.status(403).json({ status: 'error', message: 'Rol de usuario no autorizado para crear productos' });
             }
-
+    
+            // Crear el nuevo producto
             const newProduct = {
                 title,
                 model,
@@ -167,20 +170,24 @@ class ProductController {
                 category,
                 owner
             };
-
+    
             const createdProduct = await this.productService.create(newProduct);
-
-            if (this.io) { // Asegúrate de que this.io esté definido
-                this.io.emit('productAdded', newProduct);
-            } else {
-                console.error('WebSocket io no está definido.');
-            }
-
+    
+            // Emitir evento para actualizar la vista en tiempo real3
+            const updatedProducts = await this.productService.getAll();
+            io.emit('productosActualizados', updatedProducts);
+    
+            // Responder al cliente
             res.status(201).json({ status: 'success', payload: createdProduct });
-
+    
         } catch (error) {
             console.error('Error al crear el producto:', error);
-            res.status(500).json({ status: 'error', message: 'Error al agregar el producto', error: error.message });
+            // Verificar si `res` está definido antes de usarlo
+            if (res && typeof res.status === 'function') {
+                res.status(500).json({ status: 'error', message: 'Error al agregar el producto', error: error.message });
+            } else {
+                console.error('No se puede responder al cliente: ', error);
+            }
         }
     };
 

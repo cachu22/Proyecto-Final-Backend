@@ -1863,3 +1863,15 @@ Use mongoose.model(name, schema) {"stack":"Error: Error al obtener el carrito po
 [31merror[39m: ID de producto inválido - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-09-12T00:05:45.152Z"}
 [31merror[39m: ID de producto inválido - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-09-12T00:07:24.963Z"}
 [31merror[39m: ID de producto inválido - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-09-12T00:14:40.854Z"}
+[31merror[39m: El código de producto ya está en uso - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-09-12T00:36:03.504Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-09-12T00:36:03.506Z"}
+[31merror[39m: El código de producto ya está en uso - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-09-12T01:00:34.865Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-09-12T01:00:34.866Z"}
+[31merror[39m: Error al eliminar el producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-09-12T01:08:09.747Z"}
+[31merror[39m: El código de producto ya está en uso - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-09-12T01:08:15.521Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-09-12T01:08:15.522Z"}
+[31merror[39m: Error al eliminar el producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-09-12T01:08:21.223Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-09-12T01:09:45.793Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-09-12T01:09:52.373Z"}
+[31merror[39m: El código de producto ya está en uso - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-09-12T01:12:39.029Z"}
+[31merror[39m: Error al agregar un nuevo producto - Log de /src/daos/MONGO/MONGODBNUBE/productsDao.mongo.js: {"timestamp":"2024-09-12T01:12:39.031Z"}
