@@ -27,7 +27,7 @@ function getUserInfo() {
                 // Actualizar el contenido del HTML con los datos del usuario
                 $('#user-fullname').text(userData.payload.fullname || 'Nombre no disponible');
                 $('#user-email').text(userData.payload.email || 'Email no disponible');
-                // Agrega más campos según sea necesario
+                $('#user-rol').text(userData.payload.role || 'Rol no disponible');
 
             } else {
                 console.log('Usuario no está logueado o datos no válidos - Log de src/Public/js/current.js:', userData);

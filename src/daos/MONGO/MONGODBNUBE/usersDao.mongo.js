@@ -1,40 +1,52 @@
 import mongoose from "mongoose";
 import { userModel } from "../models/users.models.js";
 import { logger } from "../../../utils/logger.js";
+import nodemailer from "nodemailer";
+import crypto from "crypto";
 
 class UserDaoMongo {
   async get(query) {
-    if (typeof query === 'string') {
-      if (!mongoose.Types.ObjectId.isValid(query)) {
-        logger.error('ID de usuario inválido - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', query);
-        throw new Error('Invalid user ID');
+    try {
+      if (typeof query === 'string') {
+        if (!mongoose.Types.ObjectId.isValid(query)) {
+          logger.error('ID de usuario inválido - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', query);
+          throw new Error('Invalid user ID');
+        }
+        return await userModel.findOne({ _id: new mongoose.Types.ObjectId(query) });
       }
-      return userModel.findOne({ _id: query });
+      return await userModel.findOne(query);
+    } catch (error) {
+      logger.error('Error al obtener usuario con filtro - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', error.message);
+      throw error;
     }
-    return userModel.findOne(query);
   }
 
   async getOne(id) {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      logger.error('ID de usuario inválido - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', id);
-      throw new Error('Invalid user ID');
+    try {
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        logger.error('ID de usuario inválido - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', id);
+        throw new Error('Invalid user ID');
+      }
+      return await userModel.findOne({ _id: new mongoose.Types.ObjectId(id) });
+    } catch (error) {
+      logger.error('Error al obtener usuario - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', error.message);
+      throw error;
     }
-    return userModel.findOne({ _id: id });
   }
 
   async getOneInfo(userId) {
     try {
-        const user = await userModel.findOne({ _id: userId });
-        if (!user) {
-            logger.warning('Usuario no encontrado con el filtro:', filter);
-            throw new Error('Usuario no encontrado');
-        }
-        return user;
+      const user = await userModel.findOne({ _id: new mongoose.Types.ObjectId(userId) });
+      if (!user) {
+        logger.warning('Usuario no encontrado con el filtro:', userId);
+        throw new Error('Usuario no encontrado');
+      }
+      return user;
     } catch (error) {
-        logger.error('Error al buscar usuario:', error.message);
-        throw error;
+      logger.error('Error al buscar usuario:', error.message);
+      throw error;
     }
-}
+  }
 
   async getAll() {
     try {
@@ -49,8 +61,7 @@ class UserDaoMongo {
 
   async create(user) {
     try {
-      // Log para verificar el objeto antes de guardarlo en la base de datos
-      logger.info('Objeto que se guarda en la base de datos - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js1:', user);
+      logger.info('Objeto que se guarda en la base de datos - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', user);
       const newUser = await userModel.create(user);
       logger.info('Usuario creado con éxito - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', newUser);
       return newUser;
@@ -61,12 +72,12 @@ class UserDaoMongo {
   }
 
   async update(id, userData) {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      logger.error('ID de usuario inválido - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', id);
-      throw new Error('Invalid user ID');
-    }
     try {
-      const result = await userModel.updateOne({ _id: id }, { $set: userData });
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        logger.error('ID de usuario inválido - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', id);
+        throw new Error('Invalid user ID');
+      }
+      const result = await userModel.updateOne({ _id: new mongoose.Types.ObjectId(id) }, { $set: userData });
       logger.info('Usuario actualizado con éxito - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', result);
       return result;
     } catch (error) {
@@ -76,16 +87,40 @@ class UserDaoMongo {
   }
 
   async deleteData(id) {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      logger.error('ID de usuario inválido - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', id);
-      throw new Error('Invalid user ID');
-    }
     try {
-      const result = await userModel.deleteOne({ _id: id });
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        logger.error('ID de usuario inválido - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', id);
+        throw new Error('Invalid user ID');
+      }
+      const result = await userModel.deleteOne({ _id: new mongoose.Types.ObjectId(id) });
+
+      if (result.deletedCount === 0) {
+        logger.warn('No se encontró el usuario para eliminar - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', id);
+        throw new Error('Usuario no encontrado');
+      }
+
       logger.info('Usuario eliminado con éxito - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', result);
       return result;
     } catch (error) {
       logger.error('Error al eliminar el usuario - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', error.message);
+      throw error;
+    }
+  }
+
+  async findInactiveUsers(cutoffDate) {
+    try {
+      return await userModel.find({ last_connection: { $lt: cutoffDate } });
+    } catch (error) {
+      logger.error('Error al buscar usuarios inactivos - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', error.message);
+      throw error;
+    }
+  }
+
+  async deleteUsersByIds(userIds) {
+    try {
+      return await userModel.deleteMany({ _id: { $in: userIds } });
+    } catch (error) {
+      logger.error('Error al eliminar usuarios por IDs - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', error.message);
       throw error;
     }
   }
@@ -123,7 +158,7 @@ class UserDaoMongo {
       await transporter.sendMail(mailOptions);
       logger.info('Correo de restablecimiento de contraseña enviado correctamente');
     } catch (error) {
-      logger.error('Error al enviar el correo de restablecimiento de contraseña:', error.message);
+      logger.error('Error al enviar el correo de restablecimiento de contraseña - Log de /src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js:', error.message);
       throw error;
     }
   }

@@ -39,7 +39,7 @@ const userSchema = new Schema({
         type: [documentSchema],
         default: []
     },
-    last_connection: Date
+    last_connection: { type: Date, default: null }
 });
 
 // ODM 

@@ -15,7 +15,8 @@ const {
   update,
   deleteData,
   changeUserRole,
-  documents
+  documents,
+  deleteInactiveUsers
 } = new UserController();
 
 router.get('/', authenticateToken, adminAuth, getAll);
@@ -23,6 +24,7 @@ router.get('/:uid', getOne);
 router.get('/user-info/:uid', getOneInfo);
 router.post('/', create);
 router.put('/:uid', update);
+router.delete('/inactive', authenticateToken, adminAuth, deleteInactiveUsers);
 router.delete('/:uid', deleteData);
 router.put('/premium/:uid', authenticateToken, multerMultipleUploader, adminAuth, changeUserRole);
 router.post('/:uid/documents', multerMultipleUploader, checkFilesUploaded, documents);

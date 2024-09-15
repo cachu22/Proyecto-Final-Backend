@@ -7,11 +7,15 @@ import { logger } from "../utils/logger.js";
 import { userModel } from "../daos/MONGO/models/users.models.js";
 import mongoose from "mongoose";
 import { io } from "../server.js";
+import { sendEmail } from "../utils/sendMail.js";
+import { userService } from "../service/index.js";
 
 class ProductController {
     constructor() {
+        this.UserService = userService;
         this.productService = ProductService;
 
+        this.getOne = this.getOne.bind(this)
         this.getAll = this.getAll.bind(this);
         this.getAllPaginated = this.getAllPaginated.bind(this);
         this.getProductsByCategory = this.getProductsByCategory.bind(this);
@@ -243,9 +247,9 @@ class ProductController {
     // };
     deleteDate = async (req, res) => {
         try {
-            console.log('Parámetros recibidos en deleteDate del controller:', req.params); // Añadir este log
+            console.log('Parámetros recibidos en deleteDate del controller:', req.params);
             const { pid } = req.params;
-            console.log('PID recibido:', pid); // Verificar si el PID está siendo recibido correctamente
+            console.log('PID recibido:', pid);
     
             if (!pid) {
                 return res.status(400).json({ status: 'error', message: 'Product ID is required' });
@@ -253,15 +257,16 @@ class ProductController {
     
             const userId = req.user?._id;
             const userRole = req.user?.role;
-            console.log('User ID:', userId); // Verificar ID del usuario
-            console.log('User Role:', userRole); // Verificar rol del usuario
+            console.log('User ID:', userId);
+            console.log('User Role:', userRole);
     
             if (!userId) {
                 return res.status(401).json({ status: 'error', message: 'Usuario no autenticado' });
             }
     
+            // Obtener el producto y verificar el owner
             const product = await this.productService.getOne(pid);
-            console.log('Producto encontrado:', product); // Verificar producto encontrado
+            console.log('Producto encontrado:', product);
     
             if (!product) {
                 return res.status(404).json({ status: 'error', message: 'Producto no encontrado' });
@@ -271,11 +276,53 @@ class ProductController {
                 return res.status(500).json({ status: 'error', message: 'Error interno del servidor: Owner del producto no encontrado' });
             }
     
+            // Verificar permisos
             if (userRole === 'admin' || (userRole === 'premium' && product.owner.toString() === userId.toString())) {
                 await this.productService.delete(pid);
+    
                 io.emit('eliminarProducto', pid);
                 const updatedProducts = await this.productService.getAll();
                 io.emit('productosActualizados', updatedProducts);
+    
+                // Verificar si el owner del producto es un usuario premium
+                const ownerId = product.owner;
+                console.log('ID del owner del producto ownerId:', ownerId);
+    
+                if (!mongoose.Types.ObjectId.isValid(ownerId)) {
+                    console.error('ID de usuario inválido:', ownerId);
+                    return res.status(400).json({ status: 'error', message: 'ID de usuario inválido' });
+                }
+    
+                // Asegúrate de que el filtro es correcto
+                const owner = await this.UserService.getUser(ownerId); // Obtener el usuario del owner
+                console.log('Owner del producto2:', owner);
+    
+                if (owner) {
+                    console.log('Rol del owner:', owner.role); // Log adicional para mostrar el rol del owner
+                    
+                    if (owner.role === 'premium') {
+                        console.log('Enviando correo a:', owner.email);
+                        try {
+                            const emailInfo = await sendEmail({
+                                email: owner.email,
+                                subject: 'Producto Eliminado',
+                                html: `<p>Hola ${owner.name},</p>
+                                       <p>Tu producto con ID ${pid} ha sido eliminado.</p>
+                                       <p>Gracias,</p>
+                                       <p>TecniPC</p>
+                                       <img src="cid:node.js" alt="Logo"/>`
+                            });
+                            console.log('Correo enviado con éxito. ID del mensaje:', emailInfo.messageId);
+                        } catch (emailError) {
+                            console.error('Error al enviar el correo:', emailError);
+                        }
+                    } else {
+                        console.log('El owner del producto no es un usuario premium.');
+                    }
+                } else {
+                    console.log('No se encontró el usuario con el ID del owner.');
+                }
+    
                 return res.status(200).json({ status: 'success', message: 'Producto eliminado correctamente' });
             }
     

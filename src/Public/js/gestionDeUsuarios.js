@@ -31,8 +31,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         users.forEach(user => {
             const userDiv = document.createElement('div');
             userDiv.innerHTML = `
-                <span>${user.email} - ${user.role}</span>
-                ${currentUser.role === 'admin' ? `<button onclick="changeUserRole('${user.id}')">Cambiar Rol</button>` : ''}
+                <span>Usuario: ${user.email} - Rol de usuario: ${user.role}</span>
+                ${currentUser.role === 'admin' ? `
+                    <button onclick="changeUserRole('${user.id}')">Cambiar Rol</button>
+                    <button onclick="deleteUser('${user.id}')">Eliminar Usuario</button>
+                ` : ''}
             `;
             userList.appendChild(userDiv);
         });
@@ -43,7 +46,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function changeUserRole(userId) {
-    // Supón que tienes el token guardado en localStorage
     const token = localStorage.getItem('token'); // O donde sea que estés guardando el token
 
     try {
@@ -65,6 +67,32 @@ async function changeUserRole(userId) {
         }
     } catch (error) {
         alert('Error al cambiar el rol del usuario.');
+        console.error(error);
+    }
+}
+
+async function deleteUser(userId) {
+    const token = localStorage.getItem('token'); // O donde sea que estés guardando el token
+
+    try {
+        const response = await fetch(`/api/usersDB/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`, // Agrega el token en el encabezado
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            alert(result.message);
+            location.reload(); 
+        } else {
+            const error = await response.json();
+            alert(`Error: ${error.message}`);
+        }
+    } catch (error) {
+        alert('Error al eliminar el usuario.');
         console.error(error);
     }
 }

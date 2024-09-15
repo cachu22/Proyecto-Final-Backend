@@ -362,10 +362,14 @@ describe('Test avanzado de sesión y cambio de rol', function() {
                 email: 'testRol@test.com',
                 password: 'asd',
                 age: 36,
-                role: 'user'
             });
+            console.log('Contenido de userResponse.body:', userResponse.body);
         userToken = userResponse.body.token;
+        console.log('El ID respuesta', userToken);
+        
         userId = userResponse.body.userId;
+        console.log('el id de userId', userId);
+        
 
         // Inicia sesión para obtener el token de admin
         const adminResponse = await request(app)
@@ -381,13 +385,13 @@ describe('Test avanzado de sesión y cambio de rol', function() {
         request(app)
             .put(`/api/usersDB/premium/${userId}`)
             .set('Authorization', `Bearer ${adminToken}`)
-            .attach('document', path.resolve(__dirname, '../test/path/to/identificacion.pdf')) // Simular subida de archivo de identificación
-            .attach('document', path.resolve(__dirname, '../test/path/to/comprobante_domicilio.pdf')) // Simular subida de comprobante de domicilio
+            .attach('document', path.resolve(__dirname, '../test/path/to/identificacion.pdf'))
+            .attach('document', path.resolve(__dirname, '../test/path/to/comprobante_domicilio.pdf'))
             .attach('document', path.resolve(__dirname, '../test/path/to/comprobante_estado_cuenta.pdf'))
             .expect(200)
             .end((err, res) => {
                 if (err) {
-                    console.log(res.body); // Ver el mensaje de error
+                    console.log(res.body);
                     return done(err);
                 }
                 expect(res.body.message).to.include('Rol de usuario actualizado');

@@ -1,5 +1,10 @@
-import UserDto from "../dtos/users.dto.js";
+import { UserDto } from "../dtos/users.dto.js";
 import { logger } from "../utils/logger.js";
+import { UsersDao } from "../daos/factory.js";
+import mongoose from "mongoose";
+import { sendEmail } from "../utils/sendMail.js";
+
+const usersDao = new UsersDao()
 
 export default class UserRepository {
     constructor(userDao) {
@@ -12,6 +17,9 @@ export default class UserRepository {
     }
 
     getUser = async (filter) => {
+        if (filter._id && !mongoose.Types.ObjectId.isValid(filter._id)) {
+            throw new Error('Invalid user ID');
+        }
         const user = await this.userDao.getOne(filter);
         logger.info('Usuario en getUser - user.repository - src/repositories/user.repository.js', user); // Log info
         return user;
@@ -50,6 +58,52 @@ export default class UserRepository {
         logger.info('Usuario eliminado - user.repository - src/repositories/user.repository.js', deletedUser); // Log info
         return deletedUser ? new UserDto(deletedUser) : null;
     }
+
+    deleteInactiveUsers = async (cutoffDate) => {
+        try {
+            logger.info(`Fecha de umbral para inactividad: ${cutoffDate}`);
+    
+            // Buscar usuarios inactivos usando el DAO
+            const inactiveUsers = await usersDao.findInactiveUsers(cutoffDate);
+            logger.info(`Usuarios inactivos encontrados: ${JSON.stringify(inactiveUsers)}`);
+    
+            if (inactiveUsers.length === 0) {
+                logger.info('No hay usuarios inactivos para eliminar.');
+                return { status: 'success', message: 'No hay usuarios inactivos para eliminar.' };
+            }
+    
+            // Enviar correos a los usuarios inactivos antes de eliminarlos
+            for (const user of inactiveUsers) {
+                await sendEmail({
+                    email: user.email,
+                    subject: 'Cuenta eliminada por inactividad',
+                    html: `<p>Estimado/a ${user.first_name},</p>
+                           <p>Su cuenta ha sido eliminada debido a inactividad en los últimos 2 días.</p>
+                           <p>Saludos cordiales,</p>
+                           <p>El equipo de soporte.</p>`
+                });
+            }
+    
+            // Extraer los IDs de los usuarios inactivos y filtrar los válidos
+            const userIds = inactiveUsers.map(user => user._id);
+            const validUserIds = userIds.filter(id => mongoose.Types.ObjectId.isValid(id));
+            logger.info(`IDs válidos para eliminación: ${JSON.stringify(validUserIds)}`);
+    
+            if (validUserIds.length === 0) {
+                logger.info('No hay IDs válidos para eliminar.');
+                return { status: 'success', message: 'No hay IDs válidos para eliminar.' };
+            }
+    
+            // Eliminar usuarios inactivos usando el DAO
+            const result = await usersDao.deleteUsersByIds(validUserIds);
+            logger.info(`Resultado de la eliminación: ${JSON.stringify(result)}`);
+    
+            return { status: 'success', message: `${validUserIds.length} usuarios eliminados.` };
+        } catch (error) {
+            logger.error('Error al eliminar usuarios inactivos:', error);
+            throw new Error('Error al eliminar usuarios inactivos.');
+        }
+    };
 
     async sendPasswordResetEmail(email) {
         try {

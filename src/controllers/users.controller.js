@@ -1,11 +1,14 @@
 import { userService } from "../service/index.js";
-import UserDto from "../dtos/users.dto.js";
+import { UserDto, UserInactiveDto } from "../dtos/users.dto.js";
 import { CustomError } from "../service/errors/CustomError.js";
 import { generateUserError } from "../service/errors/info.js";
 import { EError } from "../service/errors/enums.js";
 import { createHash } from "../utils/bcrypt.js";
 import { logger } from "../utils/logger.js";
 import { checkFilesUploaded } from "../middlewares/Auth.middleware.js";
+import { sendEmail } from '../utils/sendMail.js';
+import mongoose from "mongoose";
+
 
 class UserController {
     constructor() {
@@ -114,15 +117,34 @@ class UserController {
     }
 
     deleteData = async (req, res) => {
+        const { uid } = req.params;
+        console.log(`ID recibido para eliminar: ${uid}`); // Agregado para depuración
+        
         try {
-            const { uid } = req.params;
-            const result = await this.userService.deleteUser(uid);
-            res.send({ status: 'success', payload: result });
+            // Verificar que el ID es válido
+            if (!uid) {
+                console.log('ID no proporcionado en la solicitud.');
+                return res.status(400).json({ message: 'ID no proporcionado' });
+            }
+        
+            console.log(`Intentando eliminar el usuario con ID: ${uid}`); // Agregado para depuración
+            const result = await userService.deleteUser(uid);
+    
+            console.log(`Resultado de la eliminación: ${JSON.stringify(result)}`); // Agregado para depuración
+    
+            if (!result) {
+                console.log('Usuario no encontrado durante la eliminación.');
+                return res.status(404).json({ message: 'Usuario no encontrado' });
+            }
+        
+            console.log('Usuario eliminado correctamente.');
+            return res.status(200).json({ message: 'Usuario eliminado correctamente' });
         } catch (error) {
-            logger.error("Error al eliminar usuario - Log de src/controllers/user.controller.js:", error);
-            res.status(500).send({ status: 'error', message: 'Error al eliminar usuario' });
+            console.error('Error al eliminar usuario:', error.message); // Usar console.error para errores
+            logger.error('Error al eliminar usuario - Log de users.controller.js:', error.message);
+            return res.status(500).json({ message: 'Error interno al eliminar usuario' });
         }
-    }
+    };
 
     //Botón para cambiar rol de usuario sin necesidad de documentacion
     // changeUserRole = async (req, res) => {
@@ -232,6 +254,23 @@ class UserController {
             return res.status(500).json({ message: 'Error al subir documentos', error: error.message });
         }
     };
+    
+    deleteInactiveUsers = async (req, res) => {
+        try {
+            // Registrar la fecha de umbral para la búsqueda de usuarios inactivos (2 días atrás)
+            const threshold = new Date();
+            threshold.setDate(threshold.getDate() - 2);
+            logger.info(`Fecha de umbral para inactividad: ${threshold}`);
+    
+            // Llamar al servicio para eliminar usuarios inactivos y enviar correos
+            const result = await userService.deleteInactiveUsers(threshold);
+            res.json(result);
+        } catch (error) {
+            logger.error('Error al eliminar usuarios inactivos:', error);
+            res.status(500).json({ status: 'error', message: 'Error al eliminar usuarios inactivos.' });
+        }
+    };
+    
 }
 
 export default UserController;
