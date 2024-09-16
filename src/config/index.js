@@ -12,7 +12,7 @@ dotenv.config({
 // Configuración del objeto de configuración
 export const objectConfig = {
     port: process.env.PORT || 8000,
-    mongo_uri: process.env.MONGO_URI,
+    mongo_uri: process.env.MONGO_URL,
     jwt_private_key: process.env.JWT_PRIVATE_KEY,
     persistence: process.env.PERSISTENCE,
     gmail_user: process.env.GMAIL_USER,
@@ -25,7 +25,7 @@ export const objectConfig = {
 // Función para conectar a la base de datos
 export const connectDb = async () => {
     try {
-        logger.info('Iniciando conexión a la base de datos con URI - Log de /src/config/index.js:', objectConfig.mongo_uri);
+        logger.info('Iniciando conexión a la base de datos con URI - Log de /src/config/index.js:', objectConfig.MONGO_URL);
         MongoSingleton.getInstance(objectConfig.mongo_uri);
         logger.info('Conexión a la base de datos establecida correctamente - Log de /src/config/index.js');
     } catch (error) {
