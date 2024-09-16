@@ -1,16 +1,18 @@
 import UserDaoMongo from '../src/daos/MONGO/MONGODBNUBE/usersDao.mongo.js';
-import Asserts, { strictEqual } from 'assert';
-import mongoose from 'mongoose';
+import assert from 'assert';
+import dotenv from 'dotenv';  // Para cargar variables de entorno
+import MongoSingleton from '../src/utils/MongoSingleton.js';
 
-mongoose.connect('mongodb://127.0.0.1:27017/ecommerce');
-
-const assert = Asserts.strict;
+dotenv.config();  // Carga las variables del .env
 
 describe('Test users Dao', function() {
     let userDao;
     let testUserId;
 
-    before(function() {
+    before(async function() {
+        this.timeout(5000); // Extiende el tiempo de espera si es necesario
+        // Conectar a MongoDB usando MongoSingleton
+        await MongoSingleton.connect();
         this.userDao = new UserDaoMongo();
     });
 
@@ -30,14 +32,14 @@ describe('Test users Dao', function() {
         const user = { first_name: 'John Doe', email: 'john@example.com', password: 'password123' };
         const result = await this.userDao.create(user);
         assert.ok(result._id);
-        assert.strictEqual(result.name, user.name);
+        assert.strictEqual(result.first_name, user.first_name);
         testUserId = result._id; // Guardar el ID para usarlo en otras pruebas
     });
 
     it('Debe obtener todos los usuarios', async function() {
-        const result = await this.userDao.getAll()
-        console.log(result)
-        assert.strictEqual(Array.isArray(result), true)
+        const result = await this.userDao.getAll();
+        console.log(result);
+        assert.strictEqual(Array.isArray(result), true);
     });
 
     it('Debe obtener un usuario por ID', async function() {
@@ -51,7 +53,7 @@ describe('Test users Dao', function() {
         const updatedData = { first_name: 'Johnny Depp Updated' };
         await this.userDao.update(user._id, updatedData);
         const result = await this.userDao.getOne(user._id);
-        assert.strictEqual(result.name, updatedData.name);
+        assert.strictEqual(result.first_name, updatedData.first_name);
     });
 
     it('Debe eliminar un usuario', async function() {
