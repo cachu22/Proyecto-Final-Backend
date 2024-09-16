@@ -24,7 +24,7 @@ import routerApp from './Routes/index.js';
 import viewsRouter from './Routes/views.router.js';
 import clientMensajeria from './Routes/api/clientMessage.js';
 import jwt from 'jsonwebtoken';
-import { saveMessage } from './controllers/messajecontroller.js'
+import { saveMessage } from './controllers/messaje.controller.js'
 import ProductController from './controllers/product.controller.js';
 
 const __filename = fileURLToPath(import.meta.url);
