@@ -2,6 +2,7 @@ import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import path from 'path';
+import mongoose from 'mongoose';
 import { fileURLToPath } from 'url';
 import { engine } from 'express-handlebars';
 import session from 'express-session';
@@ -100,6 +101,13 @@ dotenv.config({ path: envFilePath });
 
 app.use(cors());
 app.use(addLogger);
+
+const connection = mongoose.connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+    .then(() => console.log('Conexión a la base de datos exitosa'))
+    .catch((err) => console.error('Error al conectar a la base de datos:', err));
 
 logger.info("Configurando sesiones con MongoDB - /server.js...");
 app.use(session({

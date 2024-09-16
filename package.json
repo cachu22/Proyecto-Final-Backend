@@ -4,9 +4,7 @@
   "description": "mi primer server",
   "main": "index.js",
   "scripts": {
-    "start": "node src/server.js --mode production",
-    "dev": "node src/server.js --mode development",
-    "test": "mocha test/supertest.test.js"
+    "start": "node src/server.js --mode production"
   },
   "keywords": [],
   "author": "Adrian",

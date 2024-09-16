@@ -1,31 +1,44 @@
-import { connect } from 'mongoose';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 import { logger } from './logger.js';
+
+dotenv.config();
 
 export class MongoSingleton {
     static #instance;
 
     constructor() {
-                //En caso de querer conectar con la base en la nube
-        // connect('mongodb+srv://ladrianfer87:u7p7QfTyYPoBhL9j@cluster0.8itfk8g.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=Cluster0')
+        // Evitar crear múltiples instancias
+        if (MongoSingleton.#instance) {
+            return MongoSingleton.#instance;
+        }
 
-                //En caso de querer conectar con la base local
-        connect('mongodb://127.0.0.1:27017/ecommerce')
+        // Conectar a MongoDB
+        this.connect();
 
-            .then(() => {
-                logger.info('Conectado a la base de datos MongoDB - src/utils/MongoSingleton.js');
-            })
-            .catch(err => {
-                logger.error('Error al conectar a la base de datos MongoDB - src/utils/MongoSingleton.js:', err);
-            });
+        // Guardar la instancia creada
+        MongoSingleton.#instance = this;
     }
 
-    static getInstance() {
-        if (this.#instance) {
-            logger.info('La base de datos ya se encuentra conectada - src/utils/MongoSingleton.js');
-            return this.#instance;
+    async connect() {
+        try {
+            const db = await mongoose.connect(process.env.MONGO_URL, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true
+            });
+            logger.info('Conectado a la base de datos MongoDB - src/utils/MongoSingleton.js');
+            return db;
+        } catch (err) {
+            logger.error('Error al conectar a la base de datos MongoDB - src/utils/MongoSingleton.js:', err);
+            throw new Error('Error al conectar a la base de datos');
         }
-        this.#instance = new MongoSingleton();
-        logger.info('Base de datos conectada - src/utils/MongoSingleton.js');
+    }
+
+    // Método para obtener la instancia del Singleton
+    static getInstance() {
+        if (!this.#instance) {
+            this.#instance = new MongoSingleton();
+        }
         return this.#instance;
     }
 }
