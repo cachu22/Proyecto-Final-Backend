@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const apiUrl = 'http://localhost:8000'; // URL base de tu API
+    const apiUrl = 'https://proyecto-final-backend-z3fv.onrender.com';
     const cartIdElement = document.getElementById('cartId');
     const cartId = cartIdElement ? cartIdElement.textContent.trim() : null;
     console.log(`ID del carrito: ${cartId}`);

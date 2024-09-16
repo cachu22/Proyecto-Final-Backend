@@ -1,5 +1,5 @@
 // Definir la URL base de tu API
-const apiUrl = 'http://localhost:8000';
+const apiUrl = 'https://proyecto-final-backend-z3fv.onrender.com';
 
 // Conectar al servidor Socket.IO
 const token = localStorage.getItem('token');
@@ -7,7 +7,7 @@ const token = localStorage.getItem('token');
 if (token) {
     const socket = io(apiUrl, { 
         transports: ['websocket'],
-        query: { token }
+        query: { token: localStorage.getItem('token') }
     });
 
     // Manejo de eventos de socket

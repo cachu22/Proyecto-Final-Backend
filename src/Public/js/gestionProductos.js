@@ -1,5 +1,5 @@
 // Define la URL base de la API
-const apiUrl = 'http://localhost:8000';  
+const apiUrl = 'https://proyecto-final-backend-z3fv.onrender.com'; 
 
 // Añade un evento de escucha para el envío del formulario
 document.getElementById('productForm').addEventListener('submit', async (event) => {

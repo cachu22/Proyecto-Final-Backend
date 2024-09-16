@@ -1,4 +1,4 @@
-const apiUrl = 'http://localhost:8000';  
+const apiUrl = 'https://proyecto-final-backend-z3fv.onrender.com';
 
 $(document).ready(function() {
     // Crear un carrito en caso de que no exista y el usuario esté logueado

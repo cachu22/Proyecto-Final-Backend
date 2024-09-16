@@ -17,7 +17,7 @@ if (shouldDisplayChat()) {
 }
 
 // Inicializar el socket.io
-const apiUrl = 'http://localhost:8000';
+const apiUrl = 'https://proyecto-final-backend-z3fv.onrender.com';
 const socket = io(apiUrl, { 
     transports: ['websocket'],
     query: { token: localStorage.getItem('token') }

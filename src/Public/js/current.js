@@ -1,4 +1,4 @@
-const apiUrl = 'http://localhost:8000';
+const apiUrl = 'https://proyecto-final-backend-z3fv.onrender.com';
 
 function getUserInfo() {
     const token = localStorage.getItem('token');
