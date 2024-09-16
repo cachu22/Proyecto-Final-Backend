@@ -22,10 +22,7 @@ export class MongoSingleton {
 
     async connect() {
         try {
-            const db = await mongoose.connect(process.env.MONGO_URL, {
-                useNewUrlParser: true,
-                useUnifiedTopology: true
-            });
+            const db = await mongoose.connect(process.env.MONGO_URL);
             logger.info('Conectado a la base de datos MongoDB - src/utils/MongoSingleton.js');
             return db;
         } catch (err) {

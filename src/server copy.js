@@ -102,13 +102,13 @@ app.use(addLogger);
 logger.info("Configurando sesiones con MongoDB - /server.js...");
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: 'mongodb://localhost:27017/ecommerce',
+        mongoUrl: process.env.MONGO_URL, // Usa la URL de la base de datos desde el archivo .env
         ttl: 60 * 60 * 1000 * 24
     }),
-    secret: 's3cr3etc@d3r',
+    secret: process.env.JWT_PRIVATE_KEY, // Usa la clave privada del JWT desde el archivo .env
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }
+    cookie: { secure: false } // Ajusta esto según tus necesidades
 }));
 
 app.use(routerApp);

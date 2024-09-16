@@ -109,10 +109,10 @@ const connection = mongoose.connect(process.env.MONGO_URL)
 logger.info("Configurando sesiones con MongoDB - /server.js...");
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: 'mongodb://localhost:27017/ecommerce',
+        mongoUrl: process.env.MONGO_URL,
         ttl: 60 * 60 * 1000 * 24
     }),
-    secret: 's3cr3etc@d3r',
+    secret: process.env.JWT_PRIVATE_KEY,
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false }
