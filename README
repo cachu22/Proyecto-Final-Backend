@@ -9,9 +9,9 @@ Faltaria ver el tema de las contraseñas con GitHub que se pueden loguear solo c
 
 
 //Usando Artillery
-artillery quick --count 40 --num 50 "http://localhost:8000/cookies/simple" -o simple.json
+artillery quick --count 40 --num 50 "https://proyecto-final-backend-z3fv.onrender.com/cookies/simple" -o simple.json
 
-artillery quick --count 40 --num 50 "http://localhost:8000/cookies/compleja" -o simple.json
+artillery quick --count 40 --num 50 "https://proyecto-final-backend-z3fv.onrender.com/cookies/compleja" -o simple.json
 
 artillery run config.yml --output testPerformance.json
 artillery report testPerformance.json -o testResult.

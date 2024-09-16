@@ -37,7 +37,7 @@ const app = express();
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
     cors: {
-        origin: 'http://localhost:8000',
+        origin: 'https://proyecto-final-backend-z3fv.onrender.com',
         methods: ['GET', 'POST'],
         credentials: true
     }

@@ -1,7 +1,7 @@
 config:
   plugins:
     metrics-by-endpoint: {}
-  target: 'http://localhost:8000'
+  target: 'https://proyecto-final-backend-z3fv.onrender.com'
   phases:
     - duration: 20
       arrivalRate: 10

@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('token'); // O donde sea que estés guardando el token
     
     try {
-        const response = await fetch('http://localhost:8000/api/usersDB', {
+        const response = await fetch('https://proyecto-final-backend-z3fv.onrender.com/api/usersDB', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`, // Agrega el token en el encabezado

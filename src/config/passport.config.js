@@ -41,7 +41,7 @@ export const initializePassport = () => {
     passport.use('github', new GithubStrategy({
         clientID: 'Iv23litYUUdGsaaCbXkR',
         clientSecret: '0c9b66b2985d39262164a27194fc882e5f241cba',
-        callbackURL: 'http://localhost:8000/api/sessions/githubcallback'
+        callbackURL: 'https://proyecto-final-backend-z3fv.onrender.com/api/sessions/githubcallback'
     }, async (accessToken, refreshToken, profile, done) => {
         try {
             logger.info('Perfil de GitHub recibido - Log de /src/config/passport.config.js:', profile);

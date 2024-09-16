@@ -1,7 +1,7 @@
 			//Tratar consultas y solicitudes sobre la DB
 			//PRODUCTOS
 ### Consulta para traer todos los productos de mi DB
-GET http://localhost:8000/mgProducts/
+GET https://proyecto-final-backend-z3fv.onrender.com/mgProducts/
 
 ### Consulta para traer los productos con paginación
 GET http://127.0.0.1:8000/mgProducts/products/
@@ -150,7 +150,7 @@ GET http://localhost:8080/api/carts/5
 POST http://localhost:8080/api/carts/5/product/2
 
 ###users
-POST http://localhost:8000/api/usersDB/
+POST https://proyecto-final-backend-z3fv.onrender.com/api/usersDB/
 Content-Type: application/json
 
 {
