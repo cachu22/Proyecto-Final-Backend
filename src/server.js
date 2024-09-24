@@ -1,3 +1,9 @@
+import dotenv from 'dotenv';
+const mode = process.argv[2] === '--mode' && process.argv[3] ? process.argv[3] : 'development';
+const envFilePath = `.env.${mode}`;
+dotenv.config({ path: envFilePath });
+
+// Luego importa el resto de los módulos
 import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
@@ -10,7 +16,6 @@ import MongoStore from 'connect-mongo';
 import cors from 'cors';
 import fs from 'fs';
 import { initializePassport } from './config/passport.config.js';
-import dotenv from 'dotenv';
 import swaggerJsDoc from 'swagger-jsdoc';
 import swaggerUiExpress from 'swagger-ui-express';
 import { multerSingleUploader } from './utils/multer.js';
@@ -24,7 +29,7 @@ import routerApp from './Routes/index.js';
 import viewsRouter from './Routes/views.router.js';
 import clientMensajeria from './Routes/api/clientMessage.js';
 import jwt from 'jsonwebtoken';
-import { saveMessage } from './controllers/messaje.controller.js'
+import { saveMessage } from './controllers/messaje.controller.js';
 import ProductController from './controllers/product.controller.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -93,11 +98,7 @@ app.use(cookieParser());
 initializePassport();
 app.use(passport.initialize());
 
-const mode = process.argv[2] === '--mode' && process.argv[3] ? process.argv[3] : 'development';
 logger.info("Modo de ejecución - /server.js:", mode);
-
-const envFilePath = `.env.${mode}`;
-dotenv.config({ path: envFilePath });
 
 app.use(cors());
 app.use(addLogger);
@@ -107,15 +108,26 @@ const connection = mongoose.connect(process.env.MONGO_URL)
     .catch((err) => console.error('Error al conectar a la base de datos:', err));
 
 logger.info("Configurando sesiones con MongoDB - /server.js...");
+const isProduction = process.env.NODE_ENV === 'production';
+const isDevelopment = process.env.NODE_ENV === 'development';
+
 app.use(session({
     store: MongoStore.create({
         mongoUrl: process.env.MONGO_URL,
-        ttl: 60 * 60 * 1000 * 24
+        ttl: 60 * 60 * 1000 * 24,
+        autoRemove: 'native'
+    }).on('error', (err) => {
+        logger.error('Error al configurar las sesiones con MongoDB:', err);
     }),
     secret: process.env.JWT_PRIVATE_KEY,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }
+    cookie: {
+        secure: isProduction,
+        maxAge: 60 * 60 * 1000 * 24,
+        httpOnly: false,
+        sameSite: isProduction ? 'strict' : 'lax'
+    }
 }));
 
 app.use(routerApp);
