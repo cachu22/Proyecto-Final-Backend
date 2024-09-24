@@ -3,7 +3,6 @@ const mode = process.argv[2] === '--mode' && process.argv[3] ? process.argv[3] :
 const envFilePath = `.env.${mode}`;
 dotenv.config({ path: envFilePath });
 
-// Luego importa el resto de los módulos
 import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
