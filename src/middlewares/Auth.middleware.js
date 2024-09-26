@@ -101,8 +101,6 @@ export const preventAdminAddToCart = async (req, res, next) => {
     const userRole = req.session.user?.role;
     const userId = req.session.user?._id;
 
-
-    
     if (userRole === 'admin') {
         const errorMessage = 'Los usuarios admin no pueden agregar productos al carrito.';
         logger.error('Log de /src/middlewares/preventAdminAddToCart.js', errorMessage);
@@ -113,10 +111,11 @@ export const preventAdminAddToCart = async (req, res, next) => {
         const product = await productService.getOne(req.params.pid);
         logger.info('Información del producto', {
             product,
-            productOwner: product.owner.toString()
+            productOwner: product.owner ? product.owner.toString() : 'No tiene owner'
         });
 
-        if (userRole === 'premium' && product.owner.toString() === userId.toString()) {
+        // Asegurarse de que tanto product.owner como userId sean comparables como cadenas
+        if (userRole === 'premium' && product.owner?.toString() === userId?.toString()) {
             const errorMessage = 'No puedes agregar tu propio producto a tu carrito.';
             logger.error('Log de /src/middlewares/preventAdminAddToCart.js', errorMessage);
             return res.status(403).json({ status: 'error', message: errorMessage });
