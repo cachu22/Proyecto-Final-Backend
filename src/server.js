@@ -50,7 +50,7 @@ export const io = new Server(httpServer, {
 
 const productController = new ProductController(io);
 
-const port = objectConfig.port
+const port = process.env.PORT || 5000;
 
 logger.info("Conectando a la base de datos... - /server.js");
 connectDb()
