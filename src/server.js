@@ -112,17 +112,17 @@ const isDevelopment = process.env.NODE_ENV === 'development';
 
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: objectConfig.mongo_uri,
+        mongoUrl: process.env.MONGO_URL,
         ttl: 60 * 60 * 1000 * 24,
         autoRemove: 'native'
     }).on('error', (err) => {
         logger.error('Error al configurar las sesiones con MongoDB:', err);
     }),
-    secret: objectConfig.jwt_private_key,
+    secret: process.env.JWT_PRIVATE_KEY,
     resave: false,
     saveUninitialized: true,
     cookie: {
-        secure: process.env.NODE_ENV === 'production',
+        secure: process.env.NODE_ENV === 'production' && process.env.USE_HTTPS === 'true',
         maxAge: 60 * 60 * 1000 * 24,
         httpOnly: true,
         sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax'
