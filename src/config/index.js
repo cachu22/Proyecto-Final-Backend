@@ -3,7 +3,7 @@ import { program } from '../utils/commander.js';
 import { MongoSingleton } from '../utils/MongoSingleton.js';
 import { logger } from '../utils/logger.js';
 
-// Cargar las variables de entorno
+// Cargar las variables de entorno .env
 const { mode } = program.opts();
 dotenv.config({
     path: mode === 'production' ? './.env.production' : './.env.development'
