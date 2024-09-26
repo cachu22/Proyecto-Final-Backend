@@ -18,8 +18,6 @@ import { sendEmail } from '../../utils/sendMail.js';
 import bcrypt from 'bcrypt';
 import { objectConfig } from '../../config/index.js'
 
-const port = objectConfig;
-
 export const sessionsRouter = Router();
 
 const userService = new usersDaoMongo();

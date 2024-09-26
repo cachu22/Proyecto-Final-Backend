@@ -50,7 +50,7 @@ export const io = new Server(httpServer, {
 
 const productController = new ProductController(io);
 
-const { port } = objectConfig;
+const port = objectConfig.port
 
 logger.info("Conectando a la base de datos... - /server.js");
 connectDb()
@@ -122,10 +122,10 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     cookie: {
-        secure: isProduction,
+        secure: process.env.NODE_ENV === 'production',
         maxAge: 60 * 60 * 1000 * 24,
         httpOnly: true,
-        sameSite: isProduction ? 'strict' : 'lax'
+        sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax'
     }
 }));
 
@@ -225,7 +225,7 @@ export const getServer = () => httpServer.listen(port, error => {
     if (error) {
         logger.error("Error al iniciar el servidor - /server.js:", error);
     } else {
-        logger.info('Servidor escuchando en el puerto - /server.js' + port);
+        logger.info(`Servidor escuchando en el puerto - /server.js ${port}`);
     }
 });
 

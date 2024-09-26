@@ -4,8 +4,10 @@
   "description": "mi primer server",
   "main": "index.js",
   "scripts": {
-    "start": "node src/server.js --mode production"
-  },
+    "start": "node src/server.js --mode production",
+    "dev": "nodemon src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+},
   "keywords": [],
   "author": "Adrian",
   "license": "ISC",
