@@ -129,7 +129,6 @@ $.ajax({
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productModal" data-product-id="${product._id}">Detalles</button>
                     </div>
                 `;
-                $('#product-container').append(productCard);
             });
 
             // Asignar el evento click a los botones "Agregar al carrito" en la vista de tarjetas

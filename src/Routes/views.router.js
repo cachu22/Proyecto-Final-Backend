@@ -22,7 +22,7 @@ viewsRouter.get('/', async (req, res) => {
     const { numPage, limit } = req.query;
     try {
         // Obtener productos
-        const { docs, page, hasPrevPage, hasNextPage, prevPage, nextPage } = await ProductService.getAll({ limit, numPage });
+        const { docs, page, hasPrevPage, hasNextPage, prevPage, nextPage } = await ProductService.getAllPaginated({ limit, numPage });
 
         // Obtener información del usuario desde la sesión
         const user = req.session.user || {};

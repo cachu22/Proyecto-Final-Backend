@@ -13,7 +13,7 @@ export default class ProductRepository {
     // Obtener todos los productos con filtros
     getAllPaginated = async (filters) => {
         const products = await this.productDao.getAllPaginated(filters);
-        logger.info('Productos en getAllPaginated - product.repository - src/repositories/product.repository.js', products); // Log info
+        logger.info('Productos en getAllPaginated - product.repository - src/repositories/product.repository.js1', products); // Log info
         return products;
     };
 
